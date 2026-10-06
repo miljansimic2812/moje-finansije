@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mikijeve Finansije</title>
+<meta name="theme-color" content="#121214">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finansije">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* Layout: one phone-width column, fixed bottom nav; dark stage look, one accent per income source */
+:root {
+  --bg: #121214;
+  --surface: #1C1C21;
+  --surface-2: #26262D;
+  --line: #2A2A31;
+  --line-2: #3A3A42;
+  --fg: #F4F1EA;
+  --muted: #A19E97;
+  --dim: #8E8B85;
+  --amber: #F2B544;
+  --on-amber: #1A1406;
+  --venac: #EF5350;
+  --studio: #5B82F0;
+  --trosak: #E879B9;
+  --stednja: #5FD08F;
+  --teal: #5FC3B4;
+  --danger: #F09A8E;
+  --acc: var(--amber);
+  --on-acc: var(--on-amber);
+  --acc-soft: #2A2416;
+  --font-display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'DM Sans', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body { color: var(--fg); font-family: var(--font-body); font-size: 15px; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+button, input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+.src-svirke { --acc: var(--amber); --on-acc: #1A1406; --acc-soft: #2A2416; }
+.src-venac { --acc: var(--venac); --on-acc: #2A0A0A; --acc-soft: #3A1517; }
+.src-studio { --acc: var(--studio); --on-acc: #0A1433; --acc-soft: #15203F; }
+.src-trosak { --acc: var(--trosak); --on-acc: #2B0A1D; --acc-soft: #2E1A27; }
+.src-stednja { --acc: var(--stednja); --on-acc: #08241A; --acc-soft: #1F3A2B; }
+
+#app { max-width: 480px; margin: 0 auto; min-height: 100%; }
+.scr { padding: 24px 16px 120px; display: flex; flex-direction: column; gap: 18px; }
+.scr.form { padding-bottom: 40px; }
+
+/* Headers */
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.top .left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.top .acts { display: flex; gap: 8px; flex-shrink: 0; }
+.hello { font-size: 14px; color: var(--muted); }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--acc); text-transform: uppercase; }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; letter-spacing: -0.5px; line-height: 1.1; text-wrap: balance; }
+h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.sub { font-size: 14px; color: var(--muted); }
+.sub b { color: var(--fg); }
+.back-row { display: flex; align-items: center; gap: 12px; }
+.form-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.form-top h1 { font-family: var(--font-body); font-size: 17px; letter-spacing: 0; }
+.linkbtn { min-height: 44px; padding: 0 4px; border: none; background: none; font-size: 16px; font-weight: 500; color: var(--muted); }
+.linkbtn.strong { color: var(--acc); font-weight: 700; }
+
+.ibtn { width: 44px; height: 44px; border-radius: 22px; border: none; background: var(--surface); color: var(--fg); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ibtn svg { width: 21px; height: 21px; }
+.ibtn.acc { background: var(--acc); color: var(--on-acc); }
+.msw { display: flex; align-items: center; gap: 6px; }
+.msw h1 { flex: 1; }
+
+/* Cards */
+.card { background: var(--surface); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.card.tight { padding: 4px 16px; gap: 0; }
+.hero { background: var(--acc); color: var(--on-acc); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 4px; }
+.hero .lbl { font-size: 13px; font-weight: 700; opacity: 0.8; color: inherit; }
+.hero .big { font-family: var(--font-display); font-size: 46px; font-weight: 700; letter-spacing: -1px; line-height: 1.05; }
+.hero .small { font-size: 13px; font-weight: 600; }
+.hero .split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.hero .split > div { background: rgba(0,0,0,0.12); border-radius: 14px; padding: 10px 12px; }
+.hero .split small { display: block; font-size: 12px; font-weight: 600; }
+.hero .split b { font-size: 16px; }
+.section { display: flex; flex-direction: column; gap: 10px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.note { font-size: 12px; color: var(--muted); padding: 0 4px; line-height: 1.45; }
+
+/* Rows */
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border: none; border-bottom: 1px solid var(--line); background: none; width: 100%; text-align: left; color: var(--fg); min-height: 52px; }
+.row:last-child { border-bottom: none; }
+.row .grow { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.row .t { font-size: 15px; font-weight: 600; }
+.row .s { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.row .v { font-size: 15px; font-weight: 700; text-align: right; white-space: nowrap; }
+.row .v small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
+.row.total { font-weight: 700; }
+.row.total .t { font-weight: 700; }
+.row.strong-line { border-bottom: 2px solid var(--line-2); }
+.dotc { width: 10px; height: 10px; border-radius: 5px; flex-shrink: 0; }
+.badge { width: 38px; height: 38px; border-radius: 12px; background: var(--acc-soft); color: var(--acc); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.badge.solid { background: var(--acc); color: var(--on-acc); }
+.datebox { width: 44px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.datebox b { font-size: 18px; }
+.datebox small { font-size: 11px; color: var(--muted); }
+
+.pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
+.pill.done { background: var(--acc); color: var(--on-acc); }
+.pill.planned { border: 1px solid var(--acc); color: var(--acc); }
+.pill.missed { background: var(--surface-2); color: var(--muted); }
+.ev.missed { border: 1.5px solid var(--line-2); }
+.ev.missed .title { text-decoration: line-through; text-decoration-color: var(--dim); }
+.dot.missed { background: var(--dim); }
+.day.sel .dot.missed { background: var(--on-acc); opacity: 0.5; }
+
+/* Event cards */
+.ev { background: var(--surface); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 8px; border: 1.5px solid transparent; text-align: left; color: var(--fg); width: 100%; }
+.ev.planned { border: 1.5px dashed color-mix(in srgb, var(--acc) 45%, transparent); }
+.ev .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ev .title { font-size: 16px; font-weight: 700; }
+.ev .meta { font-size: 14px; color: var(--muted); }
+.ev .money { font-size: 18px; font-weight: 700; }
+.ev .money small { display: block; font-size: 13px; font-weight: 500; color: var(--muted); }
+.ev .foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
+.ev .rates { font-size: 13px; color: var(--muted); text-align: right; }
+.ev .rates b.me { color: var(--amber); }
+.ev .rates b.gr { color: var(--teal); }
+.mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mini a, .mini button { background: var(--surface); border: none; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 4px; text-align: left; color: var(--fg); }
+.mini .when { font-size: 12px; font-weight: 700; }
+.mini .what { font-size: 15px; font-weight: 700; }
+.mini .where { font-size: 13px; color: var(--muted); }
+
+/* Buttons */
+.btn { min-height: 52px; border-radius: 16px; border: none; background: var(--acc); color: var(--on-acc); font-size: 16px; font-weight: 700; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line-2); font-weight: 600; }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid #5A2A2A; font-weight: 600; }
+.btn.danger.solid { background: #B3261E; color: #fff; border: none; }
+.btn.small { min-height: 44px; font-size: 14px; border-radius: 14px; }
+.btn.block { width: 100%; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btns > * { flex: 1; }
+
+/* Chips & segments */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--line-2); background: transparent; color: var(--fg); font-size: 15px; font-weight: 600; }
+.chip.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.chip.add { border: 1.5px dashed var(--acc); color: var(--acc); }
+.chip.sm { min-height: 38px; font-size: 14px; padding: 0 14px; }
+.chip.light.on { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.chip .x { margin-left: 8px; opacity: 0.7; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; background: var(--surface); border-radius: 16px; padding: 4px; }
+.seg button { min-height: 44px; border-radius: 12px; border: none; background: transparent; color: var(--muted); font-size: 15px; font-weight: 700; }
+.seg button.on { background: var(--acc); color: var(--on-acc); }
+.seg button.on.neutral { background: var(--fg); color: var(--bg); }
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); min-width: 0; }
+.field input, .field textarea, .field select { height: 50px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 0 14px; font-size: 16px; font-weight: 400; width: 100%; min-width: 0; }
+.field textarea { height: auto; padding: 12px 14px; resize: none; line-height: 1.45; }
+.field input:focus, .field textarea:focus { border-color: var(--acc); outline: none; }
+.field input[type="date"], .field input[type="time"], .field input[type="month"] { -webkit-appearance: none; appearance: none; }
+.lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.amt { display: flex; align-items: center; height: 60px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); padding: 0 14px; gap: 6px; min-width: 0; }
+.amt:focus-within { border-color: var(--acc); }
+.amt input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--fg); font-size: 22px; font-weight: 700; outline: none; padding: 0; }
+.amt span { font-size: 16px; font-weight: 700; color: var(--muted); }
+.tot { background: var(--acc-soft); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.tot b { font-size: 15px; color: var(--acc); }
+.tot small { font-size: 12px; color: var(--muted); }
+.hint { background: var(--surface); border: 1.5px dashed color-mix(in srgb, var(--acc) 45%, transparent); border-radius: 18px; padding: 14px 16px; font-size: 14px; line-height: 1.5; color: #D9D4C8; }
+.scale { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
+.scale button { height: 44px; border-radius: 10px; border: none; background: var(--surface); color: var(--muted); font-size: 14px; font-weight: 700; padding: 0; }
+.scale.me button.on { background: var(--amber); color: #121214; }
+.scale.gr button.on { background: var(--teal); color: #121214; }
+.rate-head { display: flex; justify-content: space-between; align-items: baseline; }
+.rate-head b { font-size: 15px; }
+.stepper { display: flex; align-items: center; justify-content: space-between; height: 60px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); padding: 0 8px; }
+.stepper b { font-size: 20px; }
+.stepper button { width: 44px; height: 44px; border-radius: 12px; border: none; background: var(--surface-2); font-size: 22px; font-weight: 700; }
+.stepper button.plus { background: var(--acc); color: var(--on-acc); }
+.toggle { min-height: 64px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; gap: 12px; text-align: left; color: var(--fg); width: 100%; }
+.toggle .tt { display: flex; flex-direction: column; gap: 2px; }
+.toggle .tt b { font-size: 16px; font-weight: 600; }
+.toggle .tt small { font-size: 13px; color: var(--muted); }
+.sw { width: 50px; height: 30px; border-radius: 15px; background: var(--line-2); padding: 3px; display: flex; flex-shrink: 0; transition: background .15s; }
+.sw i { width: 24px; height: 24px; border-radius: 12px; background: #fff; transition: transform .15s; }
+.toggle.on .sw { background: var(--acc); }
+.toggle.on .sw i { transform: translateX(20px); }
+.inline-add { display: flex; gap: 8px; }
+.inline-add input { flex: 1; min-width: 0; height: 48px; border-radius: 14px; border: 1px solid var(--acc); background: var(--surface); color: var(--fg); padding: 0 14px; font-size: 16px; }
+
+/* Calendar */
+.calcard { background: var(--surface); border-radius: 24px; padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; }
+.cal-wd, .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.cal-wd span { text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); padding: 4px 0; }
+.cal > * { height: 46px; display: flex; align-items: center; justify-content: center; }
+.day { width: 42px; height: 42px; border-radius: 14px; border: none; background: transparent; color: var(--fg); font-size: 15px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0; }
+.day.today { box-shadow: inset 0 0 0 1.5px var(--fg); }
+.day.sel { background: var(--acc); color: var(--on-acc); box-shadow: none; }
+.dot { width: 6px; height: 6px; border-radius: 3px; display: block; }
+.dot.done { background: var(--acc); }
+.dot.planned { box-shadow: inset 0 0 0 1.5px var(--acc); }
+.day.sel .dot.done { background: var(--on-acc); }
+.day.sel .dot.planned { box-shadow: inset 0 0 0 1.5px var(--on-acc); }
+.legend { display: flex; gap: 16px; justify-content: center; font-size: 12px; color: var(--muted); padding-top: 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Bars */
+.bars { display: flex; flex-direction: column; gap: 12px; }
+.hbar { display: flex; flex-direction: column; gap: 6px; border: none; background: none; padding: 0; text-align: left; color: var(--fg); width: 100%; }
+.hbar .hb-top { display: flex; justify-content: space-between; font-size: 14px; gap: 8px; }
+.hbar .hb-top b { white-space: nowrap; }
+.track { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 4px; background: var(--acc); }
+.hbar.dim { opacity: 0.45; }
+.stack { display: flex; height: 10px; border-radius: 5px; overflow: hidden; gap: 2px; background: var(--line); }
+.stack i { display: block; height: 100%; }
+.cols { display: flex; align-items: flex-end; gap: 6px; height: 170px; }
+.col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%; }
+.col .k { font-size: 10px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.col .m { font-size: 11px; font-weight: 600; }
+.col .seg-stack { width: 100%; max-width: 30px; display: flex; flex-direction: column-reverse; gap: 2px; }
+.col .seg-stack i { display: block; border-radius: 3px; }
+.legend-l { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); }
+.legend-l span { display: inline-flex; align-items: center; gap: 5px; }
+.legend-l i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.statgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--surface); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.stat small { font-size: 12px; color: var(--muted); }
+.stat b { font-size: 21px; }
+
+/* Goals */
+.goal { background: var(--surface); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.goal .gh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.goal .gh b { font-size: 16px; }
+.goal .gf { display: flex; justify-content: space-between; font-size: 14px; gap: 8px; flex-wrap: wrap; }
+.goal .gf b { color: var(--acc); }
+.goal .track { height: 10px; border-radius: 5px; }
+
+/* Bottom nav */
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: #18181C; border-top: 1px solid var(--line); padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.nav .in { max-width: 480px; margin: 0 auto; display: flex; justify-content: space-around; align-items: flex-start; }
+.nav button { width: 64px; min-height: 48px; border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--dim); font-size: 11px; font-weight: 600; padding: 0; }
+.nav button svg { width: 22px; height: 22px; }
+.nav button.on { color: var(--acc); }
+.nav .fab { width: 56px; height: 56px; margin-top: -22px; border-radius: 28px; background: var(--amber); color: var(--on-amber); box-shadow: 0 6px 18px rgba(242,181,68,0.3); justify-content: center; }
+.nav .fab svg { width: 26px; height: 26px; }
+
+/* Misc */
+.banner { border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 1.45; display: flex; flex-direction: column; gap: 10px; background: #2A2416; border: 1px solid #5C4A22; color: #E9E2D2; }
+.banner.warn { background: #3A1517; border-color: #6B2A2D; }
+.empty { text-align: center; color: var(--muted); padding: 22px 12px; font-size: 14px; line-height: 1.5; }
+.choice { background: var(--surface); border: none; border-radius: 22px; padding: 16px; display: flex; align-items: center; gap: 16px; text-align: left; color: var(--fg); width: 100%; }
+.choice .ic { width: 52px; height: 52px; border-radius: 16px; background: var(--acc); color: var(--on-acc); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; }
+.choice .ic svg { width: 26px; height: 26px; }
+.choice b { display: block; font-size: 17px; }
+.choice small { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+.setrow { min-height: 56px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); font-size: 16px; gap: 12px; }
+.setrow:last-child { border-bottom: none; }
+.setrow span:last-child { color: var(--muted); text-align: right; }
+.toast { position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); font-weight: 700; padding: 12px 18px; border-radius: 14px; z-index: 20; font-size: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); max-width: calc(100% - 32px); text-align: center; }
+details.card summary { cursor: pointer; font-size: 16px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+details.card summary::-webkit-details-marker { display: none; }
+details.card summary span { color: var(--muted); font-weight: 500; }
+textarea.code { width: 100%; height: 120px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); padding: 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.pill.pending { background: #3A2A10; color: var(--amber); }
+.rowbtn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; background: none; border: none; padding: 0; color: inherit; text-align: left; min-height: 44px; }
+.chip.paid { border-color: var(--stednja); color: var(--stednja); flex-shrink: 0; }
+.tblwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.tbl th { font-size: 10px; font-weight: 600; color: var(--muted); text-align: right; padding: 6px 3px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+.tbl td { text-align: right; padding: 8px 3px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl th:first-child, .tbl td:first-child { text-align: left; color: var(--muted); }
+.tbl td.neg { color: var(--trosak); }
+.tbl tr.cur td { background: var(--surface-2); }
+.tbl tfoot td { font-weight: 700; border-bottom: none; border-top: 2px solid var(--line-2); color: var(--fg); }
+.tbl tfoot td:last-child { color: var(--amber); }
+.brand { font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--amber); }
+
+html,body{margin:0;min-height:100%}
+body{padding-top:env(safe-area-inset-top,0px)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>Za rad aplikacije potreban je JavaScript.</noscript>
+<script>
+/* Mikijeve Finansije – podaci i računica (bez prikaza) */
+(function (root) {
+  'use strict';
+  var KEY = 'mojesvirke.v1';
+  var KURS_DEFAULT = 117.46;
+
+  var MONTHS = ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'];
+  var MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+  var WD = ['Nedelja', 'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota'];
+  var WD_SHORT = ['NED', 'PON', 'UTO', 'SRE', 'ČET', 'PET', 'SUB'];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function isoOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function todayISO() { return isoOf(new Date()); }
+  function ym(iso) { return String(iso || '').slice(0, 7); }
+  function parseISO(s) { var p = String(s).split('-').map(Number); return new Date(p[0], (p[1] || 1) - 1, p[2] || 1); }
+  function daysIn(m) { var p = m.split('-').map(Number); return new Date(p[0], p[1], 0).getDate(); }
+  function addMonths(m, k) {
+    var p = m.split('-').map(Number), y = p[0], mm = p[1] + k;
+    while (mm > 12) { mm -= 12; y++; }
+    while (mm < 1) { mm += 12; y--; }
+    return y + '-' + pad(mm);
+  }
+  function monthLabel(m) { var p = m.split('-').map(Number); return MONTHS[p[1] - 1] + ' ' + p[0]; }
+  function monthName(m) { return MONTHS[Number(m.split('-')[1]) - 1]; }
+  function fmtDate(s) { var d = parseISO(s); return d.getDate() + '.' + (d.getMonth() + 1) + '.'; }
+  function fmtDateY(s) { var d = parseISO(s); return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear() + '.'; }
+  function fmtDayTitle(s) { var d = parseISO(s); return WD[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()].toLowerCase(); }
+
+  function num(n) {
+    n = Math.round(Number(n) || 0);
+    var s = Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return (n < 0 ? '−' : '') + s;
+  }
+  function amt(n) {
+    n = Number(n) || 0;
+    if (Math.abs(n - Math.round(n)) < 0.005) return num(n);
+    var neg = n < 0; n = Math.abs(n);
+    var whole = Math.floor(n), cents = Math.round((n - whole) * 100);
+    if (cents === 100) { whole++; cents = 0; }
+    return (neg ? '−' : '') + num(whole) + ',' + pad(cents);
+  }
+  function dec1(x) { return (Math.round((Number(x) || 0) * 10) / 10).toFixed(1).replace('.', ','); }
+  function fmtRate(r) { return String(Math.round(r * 10000) / 10000).replace('.', ','); }
+  function parseAmount(v) {
+    v = String(v == null ? '' : v).trim().replace(/[^\d,.]/g, '');
+    if (!v) return 0;
+    if (v.indexOf(',') >= 0) v = v.replace(/\./g, '').replace(',', '.');
+    else if (/^\d{1,3}(\.\d{3})+$/.test(v)) v = v.replace(/\./g, '');
+    var n = parseFloat(v);
+    return isNaN(n) ? 0 : Math.round(n * 100) / 100;
+  }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function defaults() {
+    return {
+      v: 1,
+      settings: { rate: KURS_DEFAULT, rateDate: null, rateSource: 'ručno', lastBackup: null, name: 'Miki' },
+      lists: {
+        gigTypes: ['Svadba', 'Krštenje', 'Rođendan', 'Punoletstvo', 'Slava', 'Proslava', 'Ostalo'],
+        studioJobs: ['Snimanje vokala', 'Snimanje instrumenta', 'Miks', 'Master', 'Aranžman', 'Ostalo'],
+        expenseCats: ['Gorivo', 'Putovanja', 'Kafići', 'Oprema', 'Kredit', 'Pomoć porodici', 'Ostalo']
+      },
+      rates: {},
+      gigs: [], venac: [], studio: [], expenses: [], goals: [], moves: []
+    };
+  }
+
+  function normalize(obj) {
+    var d = defaults();
+    var S = obj && typeof obj === 'object' ? obj : {};
+    S.v = 1;
+    S.settings = Object.assign(d.settings, S.settings || {});
+    S.lists = Object.assign(d.lists, S.lists || {});
+    ['gigTypes', 'studioJobs', 'expenseCats'].forEach(function (k) { if (!Array.isArray(S.lists[k])) S.lists[k] = d.lists[k]; });
+    if (!S.rates || typeof S.rates !== 'object') S.rates = {};
+    ['gigs', 'venac', 'studio', 'expenses', 'goals', 'moves'].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = []; });
+    if (!(S.settings.rate > 50 && S.settings.rate < 500)) S.settings.rate = KURS_DEFAULT;
+    return S;
+  }
+
+  function Store(storage) {
+    this.storage = storage;
+    this.ok = true;
+    this.S = defaults();
+  }
+  Store.prototype.load = function () {
+    try {
+      var raw = this.storage && this.storage.getItem(KEY);
+      this.S = normalize(raw ? JSON.parse(raw) : null);
+      this.ok = !!this.storage;
+    } catch (e) { this.ok = false; this.S = defaults(); }
+    return this.S;
+  };
+  Store.prototype.save = function () {
+    try { this.storage.setItem(KEY, JSON.stringify(this.S)); this.ok = true; }
+    catch (e) { this.ok = false; }
+    return this.ok;
+  };
+
+  /* Kurs: svaka uplata u dinarima se računa po kursu NBS na dan uplate (ako je poznat), inače po poslednjem poznatom kursu */
+  function rateFor(S, date) {
+    if (date && S.rates[date]) return S.rates[date];
+    return S.settings.rate || KURS_DEFAULT;
+  }
+  function eurOf(S, e) {
+    if (!e) return 0;
+    var r = e.rate || rateFor(S, e.date);
+    return (Number(e.eur) || 0) + (Number(e.rsd) || 0) / r;
+  }
+  function sumEur(S, list) { return list.reduce(function (s, e) { return s + eurOf(S, e); }, 0); }
+  function sumRaw(list) {
+    return list.reduce(function (a, e) { a.eur += Number(e.eur) || 0; a.rsd += Number(e.rsd) || 0; return a; }, { eur: 0, rsd: 0 });
+  }
+  function rawText(r) {
+    var p = [];
+    if (r.eur) p.push(amt(r.eur) + ' €');
+    if (r.rsd) p.push(num(r.rsd) + ' RSD');
+    return p.length ? p.join(' + ') : '0 €';
+  }
+  function byDate(a, b) { return (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1; }
+
+  function inMonth(list, m) { return list.filter(function (e) { return ym(e.date) === m; }); }
+  function isPaid(e) { return !e.pending; }
+  function gigsDone(S, m) { return inMonth(S.gigs, m).filter(function (g) { return g.status === 'done' && !g.pending; }); }
+  function studioDone(S, m) { return inMonth(S.studio, m).filter(function (g) { return g.status === 'done' && !g.pending; }); }
+  function venacPaid(S, m) { return inMonth(S.venac, m).filter(isPaid); }
+  function pendingItems(S) {
+    var out = [];
+    S.gigs.forEach(function (e) { if (e.status === 'done' && e.pending) out.push({ src: 'gig', e: e }); });
+    S.studio.forEach(function (e) { if (e.status === 'done' && e.pending) out.push({ src: 'studio', e: e }); });
+    S.venac.forEach(function (e) { if (e.pending) out.push({ src: 'venac', e: e }); });
+    return out.sort(function (a, b) { return a.e.date < b.e.date ? -1 : 1; });
+  }
+  function yearReport(S, year) {
+    var rows = [], tot = { g: 0, v: 0, s: 0, inc: 0, x: 0, net: 0, sav: 0 };
+    for (var i = 1; i <= 12; i++) {
+      var m = year + '-' + pad(i), s = monthSummary(S, m);
+      var r = { m: m, g: s.gigs.eur, v: s.venac.eur, s: s.studio.eur, inc: s.income, x: s.expenses.eur, net: s.net, sav: s.saved, n: s.gigs.list.length };
+      rows.push(r);
+      ['g', 'v', 's', 'inc', 'x', 'net', 'sav'].forEach(function (k) { tot[k] += r[k]; });
+    }
+    var inYear = function (list) { return list.filter(function (e) { return String(e.date).slice(0, 4) === String(year); }); };
+    var gigs = inYear(S.gigs), ven = inYear(S.venac).filter(isPaid), stu = inYear(S.studio), ex = inYear(S.expenses);
+    var cats = {};
+    ex.forEach(function (e) { cats[e.cat] = (cats[e.cat] || 0) + eurOf(S, e); });
+    var plate = ven.filter(function (e) { return e.kind === 'plata'; }), dnev = ven.filter(function (e) { return e.kind !== 'plata'; });
+    return {
+      year: String(year), rows: rows, tot: tot,
+      gigsDone: gigs.filter(function (g) { return g.status === 'done' && !g.pending; }).length,
+      gigsMissed: gigs.filter(function (g) { return g.status === 'missed'; }).length,
+      gigsMissedVenac: gigs.filter(function (g) { return g.status === 'missed' && g.reason === 'Koncert u Vencu'; }).length,
+      plataEur: sumEur(S, plate), plataN: plate.length,
+      dnevEur: sumEur(S, dnev), dnevN: dnev.length, dnevDays: dnev.reduce(function (a, e) { return a + (Number(e.days) || 0); }, 0),
+      studioDone: stu.filter(function (g) { return g.status === 'done' && !g.pending; }).length,
+      clients: countBy(stu.filter(function (g) { return g.status === 'done' && !g.pending; }), 'client'),
+      cats: Object.keys(cats).map(function (k) { return [k, cats[k]]; }).sort(function (a, b) { return b[1] - a[1]; })
+    };
+  }
+
+  function monthSummary(S, m) {
+    var g = gigsDone(S, m), v = venacPaid(S, m), st = studioDone(S, m), ex = inMonth(S.expenses, m), mv = inMonth(S.moves, m);
+    var gE = sumEur(S, g), vE = sumEur(S, v), sE = sumEur(S, st), xE = sumEur(S, ex);
+    var saved = mv.reduce(function (s, x) { return s + (x.dir === 'out' ? -x.amount : x.amount); }, 0);
+    var income = gE + vE + sE;
+    return {
+      gigs: { list: g, eur: gE, raw: sumRaw(g) },
+      venac: { list: v, eur: vE, raw: sumRaw(v) },
+      studio: { list: st, eur: sE, raw: sumRaw(st) },
+      expenses: { list: ex, eur: xE, raw: sumRaw(ex) },
+      income: income, net: income - xE, saved: saved, free: income - xE - saved
+    };
+  }
+
+  function savingsTotal(S, goalId) {
+    return S.moves.reduce(function (s, x) {
+      if (goalId !== undefined && (x.goalId || null) !== goalId) return s;
+      return s + (x.dir === 'out' ? -x.amount : x.amount);
+    }, 0);
+  }
+
+  /* Ponavljajući troškovi: za svaki mesec od početka do danas napravi kopiju ako je nema */
+  function applyRecurring(S, today) {
+    today = today || todayISO();
+    var cur = ym(today), changed = false;
+    S.expenses.filter(function (e) { return e.recurring && !e.parentId; }).forEach(function (t) {
+      var m = addMonths(ym(t.date), 1), guard = 0;
+      while (m <= cur && guard++ < 240) {
+        var exists = S.expenses.some(function (e) { return e.parentId === t.id && ym(e.date) === m; });
+        var skipped = (t.skip || []).indexOf(m) >= 0;
+        if (!exists && !skipped) {
+          var day = Math.min(parseISO(t.date).getDate(), daysIn(m));
+          var date = m + '-' + pad(day);
+          S.expenses.push({ id: uid(), parentId: t.id, cat: t.cat, date: date, eur: t.eur, rsd: t.rsd, rate: t.rsd ? rateFor(S, date) : null, note: t.note || '', recurring: false });
+          changed = true;
+        }
+        m = addMonths(m, 1);
+      }
+    });
+    return changed;
+  }
+
+  function monthsRange(S, period, today) {
+    var cur = ym(today || todayISO()), n;
+    if (period === '6') n = 6;
+    else if (period === '12') n = 12;
+    else {
+      var all = [].concat(S.gigs, S.venac, S.studio, S.expenses).map(function (x) { return ym(x.date); }).filter(function (x) { return x && x <= cur; }).sort();
+      var min = all.length ? all[0] : cur, m = min;
+      n = 1;
+      while (m < cur && n < 120) { n++; m = addMonths(m, 1); }
+    }
+    var arr = [];
+    for (var i = n - 1; i >= 0; i--) arr.push(addMonths(cur, -i));
+    return arr;
+  }
+
+  function countBy(list, key) {
+    var map = {};
+    list.forEach(function (e) { var k = (e[key] || '').trim(); if (!k) return; map[k] = (map[k] || 0) + 1; });
+    return Object.keys(map).map(function (k) { return [k, map[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+  }
+
+  function avg(list, key) {
+    var xs = list.map(function (e) { return e[key]; }).filter(function (x) { return x > 0; });
+    return xs.length ? xs.reduce(function (s, x) { return s + x; }, 0) / xs.length : null;
+  }
+
+  function demoData(today) {
+    today = today || todayISO();
+    var d = defaults(), cur = ym(today), R = KURS_DEFAULT;
+    d.demo = true;
+    var venues = [['Restoran Kruna', 'Gračanica'], ['Sala Lipa', 'Laplje Selo'], ['Kafana Stari most', 'Lipljan'], ['Hotel Centar', 'Kosovo Polje'], ['Restoran Kruna', 'Gračanica']];
+    var eurs = [150, 200, 250, 180, 220], rsds = [0, 3000, 5000, 0, 2000], days = [3, 4, 10, 17, 24];
+    for (var k = 5; k >= 0; k--) {
+      var m = addMonths(cur, -k);
+      days.forEach(function (day, i) {
+        var date = m + '-' + pad(day), done = date <= today, v = venues[(i + k) % 5];
+        d.gigs.push({ id: uid(), status: done ? 'done' : 'planned', date: date, time: i % 2 ? '13:00' : '19:00', venue: v[0], place: v[1],
+          type: d.lists.gigTypes[(i * 2 + k) % 5], eur: done ? eurs[i] : 0, rsd: done ? rsds[(i + k) % 5] : 0, rate: R,
+          me: done ? 7 + ((i + k) % 3) : null, grp: done ? 6 + ((i * 2 + k) % 4) : null, note: '' });
+      });
+      var p5 = m + '-05';
+      if (p5 <= today) d.venac.push({ id: uid(), kind: 'plata', forMonth: addMonths(m, -1), date: p5, eur: 0, rsd: 70000, rate: R, note: '' });
+      if (k % 2 === 0 && m + '-20' <= today) d.venac.push({ id: uid(), kind: 'dnevnica', title: 'Koncert – Niš', startDate: m + '-18', days: 2, date: m + '-20', eur: 0, rsd: 4000, rate: R, note: '' });
+      [[1, 'Marko Stanković', 'Miks', 0, 4000], [12, 'Nikola Lekić', 'Snimanje vokala', 60, 0]].forEach(function (s) {
+        var date = m + '-' + pad(s[0]), done = date <= today;
+        d.studio.push({ id: uid(), status: done ? 'done' : 'planned', client: s[1], date: date, time: '17:00', job: s[2], eur: done ? s[3] : 0, rsd: done ? s[4] : 0, rate: R, note: '' });
+      });
+      [[2, 'Gorivo', 0, 8000], [3, 'Kafići', 0, 2500], [8, 'Oprema', 85, 0]].forEach(function (e) {
+        var date = m + '-' + pad(e[0]);
+        if (date <= today) d.expenses.push({ id: uid(), cat: e[1], date: date, eur: e[2], rsd: e[3], rate: R, note: '' });
+      });
+    }
+    var first = addMonths(cur, -5);
+    d.expenses.push({ id: 'demo-kredit', cat: 'Kredit', date: first + '-01', eur: 0, rsd: 18000, rate: R, note: 'Rata kredita', recurring: true });
+    d.expenses.push({ id: 'demo-porodica', cat: 'Pomoć porodici', date: first + '-01', eur: 100, rsd: 0, rate: null, note: '', recurring: true });
+    d.goals = [{ id: 'g1', name: 'Nova oprema za studio', target: 2000 }, { id: 'g2', name: 'Rezerva', target: 5000 }];
+    for (var j = 5; j >= 0; j--) {
+      var mm = addMonths(cur, -j), dd = mm + '-06';
+      if (dd <= today) d.moves.push({ id: uid(), goalId: j % 2 ? 'g1' : 'g2', date: dd, amount: 200, dir: 'in', note: '' });
+    }
+    applyRecurring(d, today);
+    return d;
+  }
+
+  root.MS = {
+    KEY: KEY, KURS_DEFAULT: KURS_DEFAULT, MONTHS: MONTHS, MONTHS_SHORT: MONTHS_SHORT, WD: WD, WD_SHORT: WD_SHORT,
+    pad: pad, isoOf: isoOf, todayISO: todayISO, ym: ym, parseISO: parseISO, daysIn: daysIn, addMonths: addMonths,
+    monthLabel: monthLabel, monthName: monthName, fmtDate: fmtDate, fmtDateY: fmtDateY, fmtDayTitle: fmtDayTitle,
+    num: num, amt: amt, dec1: dec1, fmtRate: fmtRate, parseAmount: parseAmount, uid: uid, esc: esc,
+    defaults: defaults, normalize: normalize, Store: Store, rateFor: rateFor, eurOf: eurOf, sumEur: sumEur,
+    sumRaw: sumRaw, rawText: rawText, byDate: byDate, inMonth: inMonth, gigsDone: gigsDone, studioDone: studioDone,
+    monthSummary: monthSummary, isPaid: isPaid, venacPaid: venacPaid, pendingItems: pendingItems, yearReport: yearReport, savingsTotal: savingsTotal, applyRecurring: applyRecurring, monthsRange: monthsRange,
+    countBy: countBy, avg: avg, demoData: demoData
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Mikijeve Finansije – ekrani i akcije */
+(function () {
+  'use strict';
+  var M = window.MS;
+  var esc = M.esc, num = M.num, amt = M.amt;
+  var VERSION = '0.3';
+
+  var storage = null;
+  try { storage = window.localStorage; storage.getItem('x'); } catch (e) { storage = null; }
+  var store = new M.Store(storage);
+  var S = store.load();
+  if (M.applyRecurring(S)) store.save();
+
+  var $app = document.getElementById('app');
+  var TODAY = M.todayISO();
+
+  var UI = {
+    route: 'pregled', stack: [], month: M.ym(TODAY), sel: { svirke: null, studio: null },
+    period: '6', venacFilter: 'Sve', trosakCat: null, form: null, confirm: null,
+    adding: false, newCat: '', savMode: 'in', savGoal: null, savAmt: '', goalForm: false, goalName: '', goalTarget: '',
+    rateIn: '', importText: '', pendingImport: null, showExport: false, year: TODAY.slice(0, 4)
+  };
+
+  /* ---------- ikonice ---------- */
+  function svg(p, w) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 1.9) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
+  var I = {
+    home: svg('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
+    music: svg('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'),
+    users: svg('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>'),
+    mic: svg('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+    plus: svg('<path d="M12 5v14M5 12h14"/>', 2.4),
+    minus: svg('<path d="M5 12h14"/>', 2.4),
+    chart: svg('<path d="M5 20V11M12 20V5M19 20v-6"/>'),
+    sliders: svg('<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>'),
+    left: svg('<path d="m15 18-6-6 6-6"/>', 2.2),
+    right: svg('<path d="m9 18 6-6-6-6"/>', 2.2),
+    close: svg('<path d="M6 6l12 12M18 6 6 18"/>', 2.2),
+    bank: svg('<path d="M4 10h16v10H4zM2 7l10-4 10 4"/><path d="M12 13v4"/>'),
+    doc: svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>'),
+    refresh: svg('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>', 2.1)
+  };
+
+  /* ---------- pomoćno ---------- */
+  function save() { store.save(); }
+  function findIn(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
+  function hasData() { return S.gigs.length + S.venac.length + S.studio.length + S.expenses.length + S.moves.length > 0; }
+  function greet() { var h = new Date().getHours(); return h < 12 ? 'Dobro jutro' : h < 18 ? 'Dobar dan' : 'Dobro veče'; }
+  function eurTxt(x) { return num(x) + ' €'; }
+  function plural(n, one, few, many) { var a = n % 10, b = n % 100; return n + ' ' + (a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many); }
+  function rawOf(e) { return M.rawText({ eur: Number(e.eur) || 0, rsd: Number(e.rsd) || 0 }); }
+  function convNote(e) {
+    if (!e.rsd) return e.eur ? 'upisano u evrima' : '';
+    return '= ' + eurTxt(M.eurOf(S, e)) + (e.eur ? ' ukupno' : '');
+  }
+  function inputVal(n) { return n ? String(n).replace('.', ',') : ''; }
+  function uniq(list, key) {
+    var seen = {}, out = [];
+    list.forEach(function (e) { var v = (e[key] || '').trim(); if (v && !seen[v.toLowerCase()]) { seen[v.toLowerCase()] = 1; out.push(v); } });
+    return out.sort(function (a, b) { return a.localeCompare(b, 'sr'); });
+  }
+  function datalist(id, values) { return '<datalist id="' + id + '">' + values.map(function (v) { return '<option value="' + esc(v) + '"></option>'; }).join('') + '</datalist>'; }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var old = document.querySelector('.toast'); if (old) old.remove();
+    var t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
+    document.body.appendChild(t);
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.remove(); }, 2200);
+  }
+
+  /* ---------- kurs NBS ---------- */
+  var rateFails = 0;
+  function fetchRate(date) {
+    if (rateFails > 2 || typeof fetch !== 'function' || (navigator.onLine === false)) return Promise.resolve(null);
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 7000);
+    var url = 'https://kurs.resenje.org/api/v1/currencies/eur/rates/' + (date === TODAY ? 'today' : date);
+    return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(function (r) {
+      if (!r.ok) throw new Error('http');
+      return r.json();
+    }).then(function (j) {
+      clearTimeout(timer);
+      var v = parseFloat(j && (j.exchange_middle || j.exchangeMiddle));
+      if (!(v > 50 && v < 500)) throw new Error('bad');
+      return v;
+    }).catch(function () { clearTimeout(timer); rateFails++; return null; });
+  }
+  function applyRate(date, r) {
+    S.rates[date] = r;
+    [S.gigs, S.venac, S.studio, S.expenses].forEach(function (list) {
+      list.forEach(function (e) { if (e.date === date && e.rsd) e.rate = r; });
+    });
+  }
+  function ensureRate(e) {
+    if (!e || !e.rsd || S.rates[e.date] || e.date > TODAY) return;
+    fetchRate(e.date).then(function (r) { if (r) { applyRate(e.date, r); save(); render(true); } });
+  }
+  function refreshRate(manual) {
+    return fetchRate(TODAY).then(function (r) {
+      if (r) {
+        S.settings.rate = r; S.settings.rateDate = TODAY; S.settings.rateSource = 'NBS';
+        S.rates[TODAY] = r; save(); render(true);
+        if (manual) toast('Kurs osvežen: 1 € = ' + M.fmtRate(r) + ' RSD');
+      } else if (manual) {
+        toast('Kurs nije mogao da se preuzme. Proveri internet ili upiši kurs ručno.');
+      }
+      return r;
+    });
+  }
+  function backfillRates() {
+    var dates = {};
+    [S.gigs, S.venac, S.studio, S.expenses].forEach(function (list) {
+      list.forEach(function (e) { if (e.rsd && e.date && e.date <= TODAY && !S.rates[e.date]) dates[e.date] = 1; });
+    });
+    var todo = Object.keys(dates).sort().reverse().slice(0, 15);
+    var chain = Promise.resolve(), got = 0;
+    todo.forEach(function (d) {
+      chain = chain.then(function () { return fetchRate(d).then(function (r) { if (r) { applyRate(d, r); got++; } }); });
+    });
+    chain.then(function () { if (got) { save(); render(true); } });
+  }
+
+  /* ---------- navigacija ---------- */
+  var MAIN = ['pregled', 'svirke', 'venac', 'studio'];
+  var REASONS = ['Koncert u Vencu', 'Bolest', 'Svirka otkazana', 'Ostalo'];
+  function go(route, keepStack) {
+    if (!keepStack) UI.stack.push(UI.route);
+    UI.route = route; UI.confirm = null; UI.adding = false; UI.newCat = '';
+    render();
+  }
+  function goMain(route) { UI.stack = []; UI.form = null; go(route, true); }
+  function back() {
+    UI.form = null; UI.confirm = null; UI.adding = false; UI.pendingImport = null;
+    UI.route = UI.stack.length ? UI.stack.pop() : 'pregled';
+    render();
+  }
+  function afterSave(route, date, selKey) {
+    UI.month = M.ym(date);
+    if (selKey) UI.sel[selKey] = date;
+    UI.form = null; UI.stack = route === 'pregled' ? [] : ['pregled'];
+    UI.route = route; UI.confirm = null; UI.adding = false;
+    toast('Sačuvano');
+    render();
+  }
+
+  /* ---------- delovi ---------- */
+  function nav(active) {
+    function b(r, label, icon) { return '<button class="' + (active === r ? 'on' : '') + '" data-act="main" data-r="' + r + '"' + (active === r ? ' aria-current="page"' : '') + '>' + icon + label + '</button>'; }
+    var color = active === 'venac' ? 'src-venac' : active === 'studio' ? 'src-studio' : 'src-svirke';
+    return '<nav class="nav ' + color + '" aria-label="Glavni meni"><div class="in">' +
+      b('pregled', 'Pregled', I.home) + b('svirke', 'Svirke', I.music) +
+      '<button class="fab" data-act="go" data-r="dodaj" aria-label="Dodaj">' + I.plus + '</button>' +
+      b('venac', 'Venac', I.users) + b('studio', 'Studio', I.mic) + '</div></nav>';
+  }
+  function monthSwitch(titleTag) {
+    return '<div class="msw"><button class="ibtn" data-act="month" data-d="-1" aria-label="Prethodni mesec">' + I.left + '</button>' +
+      '<' + (titleTag || 'h1') + '>' + M.monthLabel(UI.month) + '</' + (titleTag || 'h1') + '>' +
+      '<button class="ibtn" data-act="month" data-d="1" aria-label="Sledeći mesec">' + I.right + '</button></div>';
+  }
+  function backRow(title, extra) {
+    return '<div class="top"><div class="back-row"><button class="ibtn" data-act="back" aria-label="Nazad">' + I.left + '</button><h1>' + esc(title) + '</h1></div>' + (extra || '') + '</div>';
+  }
+  function calendar(m, marks, selDay, act) {
+    var p = m.split('-').map(Number), first = new Date(p[0], p[1] - 1, 1), offset = (first.getDay() + 6) % 7, dim = M.daysIn(m);
+    var h = '<div class="calcard"><div class="cal-wd">' + ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map(function (w) { return '<span>' + w + '</span>'; }).join('') + '</div><div class="cal">';
+    for (var i = 0; i < offset; i++) h += '<span></span>';
+    for (var d = 1; d <= dim; d++) {
+      var iso = m + '-' + M.pad(d), mk = marks[d] || '', cls = 'day' + (iso === selDay ? ' sel' : '') + (iso === TODAY ? ' today' : '');
+      h += '<span><button class="' + cls + '" data-act="' + act + '" data-date="' + iso + '" aria-label="' + d + '. ' + M.MONTHS[p[1] - 1].toLowerCase() + (mk ? (mk === 'done' ? ', urađeno' : mk === 'missed' ? ', nisam svirao' : ', zakazano') : '') + '"' + (iso === selDay ? ' aria-pressed="true"' : '') + '>' + d + '<i class="dot ' + mk + '"></i></button></span>';
+    }
+    return h + '</div><div class="legend"><span><i class="dot done"></i>' + (act === 'selStudio' ? 'Urađeno' : 'Odsvirano') + '</span><span><i class="dot planned"></i>Zakazano</span>' +
+      (act === 'selGig' ? '<span><i class="dot missed"></i>Nisam svirao</span>' : '') + '</div></div>';
+  }
+  function marksFor(list) {
+    var mk = {};
+    var rank = { done: 3, planned: 2, missed: 1 };
+    list.forEach(function (e) {
+      var d = M.parseISO(e.date).getDate(), s = rank[e.status] ? e.status : 'planned';
+      if (!mk[d] || rank[s] > rank[mk[d]]) mk[d] = s;
+    });
+    return mk;
+  }
+  function selDate(key, list) {
+    var s = UI.sel[key];
+    if (s && M.ym(s) === UI.month) return s;
+    if (M.ym(TODAY) === UI.month) return TODAY;
+    return list.length ? list[0].date : UI.month + '-01';
+  }
+  function banners() {
+    var h = '';
+    if (S.demo) h += '<div class="banner"><div>Ovo su <b>primer podaci</b>, da vidiš kako aplikacija radi. Obriši ih pre nego što počneš da upisuješ svoje.</div><button class="btn small" data-act="clearDemo">Obriši primer i počni</button></div>';
+    if (!store.ok) h += '<div class="banner warn">Telefon trenutno ne dozvoljava čuvanje podataka u ovom pregledaču (npr. privatni režim). Ono što upišeš može da nestane.</div>';
+    var last = S.settings.lastBackup;
+    if (!S.demo && hasData() && (!last || (new Date(TODAY) - new Date(last)) / 86400000 > 30)) {
+      h += '<div class="banner"><div>' + (last ? 'Poslednja rezervna kopija je od ' + M.fmtDateY(last) + '.' : 'Još nisi napravio rezervnu kopiju.') + ' Podaci su samo na ovom telefonu.</div><button class="btn small" data-act="go" data-r="podesavanja">Napravi kopiju</button></div>';
+    }
+    return h;
+  }
+  function amountFields(f, label) {
+    return '<div class="section"><div class="lbl">' + esc(label || 'Zarada (upiši šta si dobio, može oboje)') + '</div>' +
+      '<div class="grid2"><label class="amt"><input id="f-eur" inputmode="decimal" autocomplete="off" data-f="eur" value="' + esc(f.eur) + '" placeholder="0" aria-label="Iznos u evrima"><span>€</span></label>' +
+      '<label class="amt"><input id="f-rsd" inputmode="decimal" autocomplete="off" data-f="rsd" value="' + esc(f.rsd) + '" placeholder="0" aria-label="Iznos u dinarima"><span>RSD</span></label></div>' +
+      '<div class="tot" id="tot" aria-live="polite">' + totHTML(f) + '</div></div>';
+  }
+  function totHTML(f) {
+    var eur = M.parseAmount(f.eur), rsd = M.parseAmount(f.rsd), rate = M.rateFor(S, f.date), t = eur + rsd / rate;
+    var sign = f.kind === 'expense' ? '−' : '';
+    var small = rsd
+      ? num(rsd) + ' RSD = ' + eurTxt(rsd / rate) + ' po kursu ' + M.fmtRate(rate) + (S.rates[f.date] ? ' (NBS, ' + M.fmtDate(f.date) + ')' : ' (poslednji poznati kurs)')
+      : 'upisano u evrima, ništa se ne preračunava';
+    return '<b>Ukupno ' + sign + num(t) + ' €</b><small>' + small + '</small>';
+  }
+  function chipsField(label, listKey, field, value) {
+    var h = '<div class="section"><div class="lbl">' + label + '</div><div class="chips">';
+    S.lists[listKey].forEach(function (c) {
+      h += '<button type="button" class="chip' + (c === value ? ' on' : '') + '" data-act="fset" data-f="' + field + '" data-v="' + esc(c) + '"' + (c === value ? ' aria-pressed="true"' : '') + '>' + esc(c) + '</button>';
+    });
+    if (value && S.lists[listKey].indexOf(value) < 0) h += '<button type="button" class="chip on" aria-pressed="true">' + esc(value) + '</button>';
+    h += '<button type="button" class="chip add" data-act="toggleAdd">+ Nova kategorija</button></div>';
+    if (UI.adding) {
+      h += '<div class="inline-add"><input id="newcat" data-u="newCat" value="' + esc(UI.newCat) + '" placeholder="Naziv nove kategorije" aria-label="Naziv nove kategorije"><button type="button" class="btn small" data-act="addCat" data-list="' + listKey + '" data-f="' + field + '">Dodaj</button></div>';
+    }
+    return h + '</div>';
+  }
+  function scale(field, val, cls, label) {
+    var h = '<div class="section"><div class="rate-head"><span class="lbl">' + label + '</span><b style="color:var(--' + (cls === 'me' ? 'amber' : 'teal') + ')">' + (val ? val + ' / 10' : 'bez ocene') + '</b></div><div class="scale ' + cls + '">';
+    for (var i = 1; i <= 10; i++) h += '<button type="button" class="' + (val && i <= val ? 'on' : '') + '" data-act="rate" data-f="' + field + '" data-v="' + i + '" aria-label="' + label + ' ' + i + '">' + i + '</button>';
+    return h + '</div></div>';
+  }
+  function field(label, f, key, type, extra) {
+    return '<label class="field">' + label + '<input id="f-' + key + '" type="' + (type || 'text') + '" data-f="' + key + '" value="' + esc(f[key] || '') + '"' + (extra || '') + '></label>';
+  }
+  function noteField(f, label, ph) {
+    return '<label class="field">' + (label || 'Beleška') + '<textarea id="f-note" rows="3" data-f="note" placeholder="' + esc(ph || '') + '">' + esc(f.note || '') + '</textarea></label>';
+  }
+  function formTop(title) {
+    return '<div class="form-top"><button class="linkbtn" data-act="back">Otkaži</button><h1>' + esc(title) + '</h1><button class="linkbtn strong" data-act="saveForm">Sačuvaj</button></div>';
+  }
+  function deleteBlock() {
+    if (!UI.form || !UI.form.id) return '';
+    if (UI.confirm === 'delForm') return '<div class="btns"><button class="btn ghost" data-act="cancelConfirm">Odustani</button><button class="btn danger solid" data-act="deleteForm">Da, obriši</button></div>';
+    return '<button class="btn danger block" data-act="confirm" data-c="delForm">Obriši</button>';
+  }
+
+  function pendingToggle(f, title, subTxt) {
+    return '<button type="button" class="toggle' + (f.pending ? ' on' : '') + '" data-act="togglePending" aria-pressed="' + !!f.pending + '"><span class="tt"><b>' + title + '</b><small>' + subTxt + '</small></span><span class="sw"><i></i></span></button>';
+  }
+
+  /* ---------- kartice ---------- */
+  function gigCard(g) {
+    var done = g.status === 'done', missed = g.status === 'missed';
+    var place = [g.venue, g.place].filter(Boolean).join(', ');
+    var st = done ? (g.pending ? 'pending' : 'done') : missed ? 'missed' : 'planned';
+    var h = '<button class="ev ' + st + '" data-act="editGig" data-id="' + g.id + '">' +
+      '<span class="head"><span class="title">' + esc(g.type || 'Svirka') + (g.time ? ' · ' + esc(g.time) : '') + '</span><span class="pill ' + (st === 'pending' ? 'done' : st) + '">' + (done ? 'Odsvirano' : missed ? 'Nisam svirao' : 'Zakazano') + '</span></span>' +
+      (place ? '<span class="meta">' + esc(place) + '</span>' : '');
+    if (missed) {
+      h += '<span class="meta">Razlog: <b style="color:var(--fg)">' + esc(g.reason || 'nije upisan') + '</b> · ne računa se u zaradu</span>';
+    } else if (done && g.pending) {
+      h += '<span class="foot"><span class="money num"><small>čeka uplatu' + (g.eur || g.rsd ? ', očekuješ' : '') + '</small>' + (g.eur || g.rsd ? rawOf(g) : '') + '</span><span class="pill pending">Čeka uplatu</span></span>';
+    } else if (done) {
+      h += '<span class="foot"><span class="money num">' + rawOf(g) + (g.rsd ? '<small>ukupno ' + eurTxt(M.eurOf(S, g)) + '</small>' : '') + '</span>' +
+        '<span class="rates">' + (g.me ? 'moja ocena <b class="me">' + g.me + '/10</b><br>' : '') + (g.grp ? 'ocena orkestra <b class="gr">' + g.grp + '/10</b>' : '') + '</span></span>';
+    } else {
+      h += '<span class="btn small block" style="pointer-events:none">' + (g.date < TODAY ? 'Upiši kako je prošlo' : 'Upiši zaradu posle svirke') + '</span>';
+    }
+    return h + '</button>';
+  }
+  function sessionCard(s) {
+    var done = s.status === 'done';
+    var h = '<button class="ev ' + (done ? 'done' : 'planned') + '" data-act="editStudio" data-id="' + s.id + '">' +
+      '<span class="head"><span class="title">' + esc(s.client || 'Klijent') + '</span><span class="pill ' + (done ? 'done' : 'planned') + '">' + (done ? 'Urađeno' : 'Zakazano') + '</span></span>' +
+      '<span class="meta">' + esc([s.job, s.time].filter(Boolean).join(' · ')) + '</span>';
+    if (done && s.pending) h += '<span class="foot"><span class="money num"><small>čeka uplatu' + (s.eur || s.rsd ? ', očekuješ' : '') + '</small>' + (s.eur || s.rsd ? rawOf(s) : '') + '</span><span class="pill pending">Čeka uplatu</span></span>';
+    else if (done) h += '<span class="money num">' + rawOf(s) + (s.rsd ? '<small>= ' + eurTxt(M.eurOf(S, s)) + '</small>' : '') + '</span>';
+    else h += '<span class="btn small block" style="pointer-events:none">Upiši zaradu</span>';
+    return h + '</button>';
+  }
+  function monthRow(e, act, title, sub, done) {
+    var d = M.parseISO(e.date);
+    if (e.status === 'missed') {
+      return '<button class="row" data-act="' + act + '" data-id="' + e.id + '" style="opacity:.75"><span class="datebox"><b>' + d.getDate() + '</b><small>' + M.WD_SHORT[d.getDay()] + '</small></span>' +
+        '<span class="grow"><span class="t" style="text-decoration:line-through">' + esc(title) + '</span><span class="s">' + esc(sub) + '</span></span><span class="v"><small>nisam svirao' + (e.reason ? '<br>' + esc(e.reason) : '') + '</small></span></button>';
+    }
+    return '<button class="row" data-act="' + act + '" data-id="' + e.id + '"><span class="datebox"><b>' + d.getDate() + '</b><small>' + M.WD_SHORT[d.getDay()] + '</small></span>' +
+      '<span class="grow"><span class="t">' + esc(title) + '</span><span class="s">' + esc(sub) + '</span></span>' +
+      '<span class="v num">' + (done && e.pending ? '<small style="color:var(--amber)">čeka uplatu</small>' + (e.eur || e.rsd ? rawOf(e) : '') : done ? rawOf(e) + (e.rsd && e.eur ? '<small>= ' + eurTxt(M.eurOf(S, e)) + '</small>' : '') : '<small>zakazano</small>') + '</span></button>';
+  }
+
+  /* ---------- ekrani ---------- */
+  var V = {};
+
+  V.pregled = function () {
+    var m = UI.month, s = M.monthSummary(S, m);
+    var h = '<div class="scr src-svirke">';
+    h += '<div class="top"><div class="left"><div class="brand">Mikijeve Finansije</div><div class="hello">' + greet() + ', ' + esc(S.settings.name || 'Miki') + '</div></div><div class="acts">' +
+      '<button class="ibtn" data-act="go" data-r="izvestaj" aria-label="Godišnji izveštaj">' + I.doc + '</button>' +
+      '<button class="ibtn" data-act="go" data-r="statistika" aria-label="Statistika">' + I.chart + '</button>' +
+      '<button class="ibtn" data-act="go" data-r="podesavanja" aria-label="Podešavanja">' + I.sliders + '</button></div></div>';
+    h += monthSwitch();
+    h += banners();
+    var stale = S.gigs.filter(function (e) { return e.status === 'planned' && e.date < TODAY; }).sort(M.byDate);
+    if (stale.length) {
+      h += '<div class="banner"><div>' + (stale.length === 1 ? 'Jedna svirka je prošla' : plural(stale.length, 'svirka je prošla', 'svirke su prošle', 'svirki je prošlo')) + ', a nije upisano kako je bilo. Upiši zaradu ili označi „Nisam svirao”.</div><button class="btn small" data-act="editGig" data-id="' + stale[0].id + '">Upiši (' + M.fmtDate(stale[0].date) + ')</button></div>';
+    }
+    if (!hasData() && !S.demo) {
+      h += '<div class="card"><h2>Dobro došao u Mikijeve Finansije</h2><div class="sub">Ovde vodiš svirke, platu i dnevnice iz Venca, snimanja u studiju, troškove i štednju. Sve se čuva samo na tvom telefonu.</div>' +
+        '<div class="btns"><button class="btn" data-act="go" data-r="dodaj">Upiši prvi unos</button><button class="btn ghost" data-act="loadDemo">Pogledaj primer</button></div></div>';
+    }
+    h += '<div class="hero"><div class="lbl">Ukupno ostaje ti</div><div class="big num">' + eurTxt(s.net) + '</div>' +
+      '<div class="small num">zarada ' + eurTxt(s.income) + ' − troškovi ' + eurTxt(s.expenses.eur) + '</div></div>';
+
+    function src(cls, route, title, subTxt, val, color) {
+      return '<button class="row" data-act="main" data-r="' + route + '"><span class="dotc" style="background:var(--' + color + ')"></span><span class="grow"><span class="t">' + title + '</span><span class="s">' + subTxt + '</span></span><span class="v num">' + val + '</span></button>';
+    }
+    var g = s.gigs, v = s.venac, st = s.studio, x = s.expenses;
+    var plate = v.list.filter(function (e) { return e.kind === 'plata'; }).length, dnev = v.list.length - plate;
+    h += '<div class="section"><h2>Obračun</h2><div class="card tight">' +
+      src('', 'svirke', 'Privatne svirke', plural(g.list.length, 'svirka', 'svirke', 'svirki') + (g.list.length ? ' · ' + M.rawText(g.raw) : ''), '+' + eurTxt(g.eur), 'amber') +
+      src('', 'venac', 'Ansambl Venac', (v.list.length ? [plate ? 'plata' : '', dnev ? plural(dnev, 'dnevnica', 'dnevnice', 'dnevnica') : ''].filter(Boolean).join(' + ') + ' · ' + M.rawText(v.raw) : 'nema uplata'), '+' + eurTxt(v.eur), 'venac') +
+      src('', 'studio', 'Sonoris Production', plural(st.list.length, 'snimanje', 'snimanja', 'snimanja') + (st.list.length ? ' · ' + M.rawText(st.raw) : ''), '+' + eurTxt(st.eur), 'studio') +
+      '<div class="row total"><span class="grow"><span class="t">Ukupna zarada</span></span><span class="v num">' + eurTxt(s.income) + '</span></div>' +
+      '<button class="row strong-line" data-act="go" data-r="troskovi"><span class="dotc" style="background:var(--trosak)"></span><span class="grow"><span class="t">Troškovi</span><span class="s">' + (x.list.length ? M.rawText(x.raw) : 'nema troškova') + '</span></span><span class="v num" style="color:var(--trosak)">−' + eurTxt(x.eur) + '</span></button>' +
+      '<div class="row total"><span class="grow"><span class="t" style="font-size:16px">Ostaje ti</span></span><span class="v num" style="font-family:var(--font-display);font-size:22px;color:var(--amber)">' + eurTxt(s.net) + '</span></div>' +
+      '<button class="row" data-act="go" data-r="stednja"><span class="dotc" style="background:var(--stednja)"></span><span class="grow"><span class="t">od toga na štednju</span><span class="s">slobodno za trošenje: ' + eurTxt(s.free) + '</span></span><span class="v num" style="color:var(--stednja)">' + eurTxt(s.saved) + '</span></button>' +
+      '</div><div class="note">Dinari se preračunavaju u evre po kursu NBS na dan svake uplate. Iznosi u evrima ostaju kakvi jesu.</div></div>';
+
+    var pend = M.pendingItems(S);
+    if (pend.length) {
+      var pSum = pend.reduce(function (a, p) { return a + M.eurOf(S, p.e); }, 0);
+      h += '<div class="section"><div class="section-head"><h2>Čeka uplatu</h2><span class="sub num">' + (pSum ? 'očekuješ ' + eurTxt(pSum) : '') + '</span></div><div class="card tight">';
+      pend.forEach(function (p) {
+        var e = p.e, color = p.src === 'gig' ? 'amber' : p.src === 'studio' ? 'studio' : 'venac';
+        var act = p.src === 'gig' ? 'editGig' : p.src === 'studio' ? 'editStudio' : 'editVenac';
+        var title = p.src === 'gig' ? (e.type || 'Svirka') + (e.venue ? ' – ' + e.venue : '') : p.src === 'studio' ? (e.client || 'Klijent') + (e.job ? ' – ' + e.job : '') : (e.kind === 'plata' ? 'Plata' + (e.forMonth ? ' za ' + M.monthName(e.forMonth).toLowerCase() : '') : (e.title || 'Dnevnica'));
+        var sub = (p.src === 'gig' ? 'Svirka' : p.src === 'studio' ? 'Studio' : 'Venac') + ' · ' + M.fmtDateY(e.date) + (e.eur || e.rsd ? ' · ' + rawOf(e) : '');
+        h += '<div class="row"><button class="rowbtn" data-act="' + act + '" data-id="' + e.id + '"><span class="dotc" style="background:var(--' + color + ')"></span><span class="grow"><span class="t">' + esc(title) + '</span><span class="s">' + esc(sub) + '</span></span></button>' +
+          '<button class="chip sm paid" data-act="markPaid" data-src="' + p.src + '" data-id="' + e.id + '">Plaćeno</button></div>';
+      });
+      h += '</div><div class="note">Ovo se ne računa u zaradu dok ne pritisneš „Plaćeno”.</div></div>';
+    }
+
+    var upcoming = S.gigs.filter(function (e) { return e.status === 'planned' && e.date >= TODAY; }).map(function (e) { return { e: e, k: 'gig' }; })
+      .concat(S.studio.filter(function (e) { return e.status !== 'done' && e.date >= TODAY; }).map(function (e) { return { e: e, k: 'studio' }; }))
+      .sort(function (a, b) { return M.byDate(a.e, b.e); }).slice(0, 4);
+    h += '<div class="section"><h2>Zakazano</h2>';
+    if (!upcoming.length) h += '<div class="card"><div class="sub">Nema zakazanih svirki ni snimanja.</div></div>';
+    else {
+      h += '<div class="mini">';
+      upcoming.forEach(function (u) {
+        var d = M.parseISO(u.e.date), when = M.WD_SHORT[d.getDay()] + ' ' + M.fmtDate(u.e.date) + (u.e.time ? ' · ' + esc(u.e.time) : '');
+        if (u.k === 'gig') h += '<button data-act="editGig" data-id="' + u.e.id + '"><span class="when" style="color:var(--amber)">' + when + '</span><span class="what">' + esc(u.e.type || 'Svirka') + '</span><span class="where">' + esc([u.e.venue, u.e.place].filter(Boolean).join(', ')) + '</span></button>';
+        else h += '<button data-act="editStudio" data-id="' + u.e.id + '"><span class="when" style="color:var(--studio)">' + when + '</span><span class="what">' + esc(u.e.client || 'Snimanje') + '</span><span class="where">Studio · ' + esc(u.e.job || '') + '</span></button>';
+      });
+      h += '</div>';
+    }
+    h += '</div></div>';
+    return h + nav('pregled');
+  };
+
+  V.svirke = function () {
+    var m = UI.month, list = M.inMonth(S.gigs, m).sort(M.byDate);
+    var done = list.filter(function (g) { return g.status === 'done' && !g.pending; });
+    var missed = list.filter(function (g) { return g.status === 'missed'; }).length, planned = list.filter(function (g) { return g.status === 'planned'; }).length;
+    var sel = selDate('svirke', list), day = list.filter(function (g) { return g.date === sel; });
+    var h = '<div class="scr src-svirke"><div class="eyebrow">Privatne svirke</div>' + monthSwitch();
+    h += '<div class="sub">Zarađeno: <b class="num">' + eurTxt(M.sumEur(S, done)) + '</b>' + (done.length ? ' (' + M.rawText(M.sumRaw(done)) + ')' : '') + ' · ' + done.length + ' odsvirano, ' + planned + ' zakazano' + (missed ? ', ' + missed + ' nisam svirao' : '') + '</div>';
+    h += calendar(m, marksFor(list), sel, 'selGig');
+    h += '<div class="section"><div class="section-head"><h2>' + M.fmtDayTitle(sel) + '</h2></div>';
+    day.forEach(function (g) { h += gigCard(g); });
+    h += '<button class="btn ghost block" data-act="newGig" data-date="' + sel + '">' + (day.length ? '+ Još jedna svirka ovog dana' : (sel >= TODAY ? '+ Zakaži svirku' : '+ Upiši svirku')) + '</button></div>';
+    if (list.length) {
+      h += '<div class="section"><h2>Sve svirke u mesecu</h2><div class="card tight">';
+      list.forEach(function (g) { h += monthRow(g, 'editGig', g.type || 'Svirka', [g.venue, g.place].filter(Boolean).join(', '), g.status === 'done'); });
+      h += '</div></div>';
+    }
+    return h + '</div>' + nav('svirke');
+  };
+
+  V.venac = function () {
+    var m = UI.month, mon = M.venacPaid(S, m), year = m.slice(0, 4);
+    var plate = mon.filter(function (e) { return e.kind === 'plata'; }), dnev = mon.filter(function (e) { return e.kind !== 'plata'; });
+    var h = '<div class="scr src-venac"><div class="eyebrow">Ostali prihodi</div><h1>Ansambl Venac</h1>' + monthSwitch('h2');
+    h += '<div class="hero"><div class="lbl">' + M.monthLabel(m) + '</div><div class="big num">' + eurTxt(M.sumEur(S, mon)) + '</div>' +
+      '<div class="small num">' + (mon.length ? M.rawText(M.sumRaw(mon)) + ' · dinari po kursu NBS na dan uplate' : 'nema uplata ovog meseca') + '</div>' +
+      '<div class="split"><div><small>Plata</small><b class="num">' + eurTxt(M.sumEur(S, plate)) + '</b></div><div><small>Dnevnice (' + dnev.length + ')</small><b class="num">' + eurTxt(M.sumEur(S, dnev)) + '</b></div></div></div>';
+    h += '<div class="btns"><button class="btn" data-act="newVenac" data-k="plata">+ Plata</button><button class="btn ghost" data-act="newVenac" data-k="dnevnica">+ Dnevnica</button></div>';
+    h += '<div class="chips">' + ['Sve', 'Plate', 'Dnevnice'].map(function (l) { return '<button class="chip sm light' + (UI.venacFilter === l ? ' on' : '') + '" data-act="venacFilter" data-v="' + l + '">' + l + '</button>'; }).join('') + '</div>';
+    var list = S.venac.filter(function (e) { return e.date.slice(0, 4) === year; })
+      .filter(function (e) { return UI.venacFilter === 'Sve' || (UI.venacFilter === 'Plate') === (e.kind === 'plata'); })
+      .sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    h += '<div class="section"><h2>Uplate u ' + year + '.</h2>';
+    if (!list.length) h += '<div class="card"><div class="empty">Još nema upisanih uplata. Dodaj platu kad legne ili dnevnicu posle koncerta.</div></div>';
+    else {
+      h += '<div class="card tight">';
+      list.forEach(function (e) {
+        var plata = e.kind === 'plata';
+        var title = plata ? 'Plata' + (e.forMonth ? ' za ' + M.monthName(e.forMonth).toLowerCase() : '') : (e.title || 'Dnevnica');
+        var sub = plata ? (e.pending ? 'čeka uplatu' : 'legla ' + M.fmtDateY(e.date)) : (e.days || 1) + ' ' + ((e.days || 1) === 1 ? 'dan' : 'dana') + (e.startDate ? ' · od ' + M.fmtDate(e.startDate) : '') + (e.pending ? ' · čeka uplatu' : ' · legla ' + M.fmtDate(e.date));
+        h += '<button class="row" data-act="editVenac" data-id="' + e.id + '"><span class="badge' + (plata ? ' solid' : '') + '">' + (plata ? 'P' : 'D') + '</span><span class="grow"><span class="t">' + esc(title) + '</span><span class="s">' + esc(sub) + '</span></span><span class="v num">' + rawOf(e) + (e.rsd ? '<small>= ' + eurTxt(M.eurOf(S, e)) + '</small>' : '') + '</span></button>';
+      });
+      h += '</div>';
+    }
+    var yAll = S.venac.filter(function (e) { return e.date.slice(0, 4) === year && !e.pending; });
+    h += '<div class="note">Ukupno ' + year + '.: <b class="num" style="color:var(--fg)">' + eurTxt(M.sumEur(S, yAll)) + '</b></div></div>';
+    return h + '</div>' + nav('venac');
+  };
+
+  V.studio = function () {
+    var m = UI.month, list = M.inMonth(S.studio, m).sort(M.byDate);
+    var done = list.filter(function (g) { return g.status === 'done' && !g.pending; }), planned = list.filter(function (g) { return g.status !== 'done'; }).length;
+    var sel = selDate('studio', list), day = list.filter(function (g) { return g.date === sel; });
+    var h = '<div class="scr src-studio"><div class="eyebrow">Studio</div><h1>Sonoris Production</h1>' + monthSwitch('h2');
+    h += '<div class="sub">Zarađeno: <b class="num">' + eurTxt(M.sumEur(S, done)) + '</b>' + (done.length ? ' (' + M.rawText(M.sumRaw(done)) + ')' : '') + ' · ' + done.length + ' urađeno, ' + planned + ' zakazano</div>';
+    h += calendar(m, marksFor(list), sel, 'selStudio');
+    h += '<div class="section"><h2>' + M.fmtDayTitle(sel) + '</h2>';
+    day.forEach(function (s) { h += sessionCard(s); });
+    h += '<button class="btn ghost block" data-act="newStudio" data-date="' + sel + '">' + (day.length ? '+ Još jedan termin ovog dana' : '+ Zakaži snimanje') + '</button></div>';
+    if (list.length) {
+      h += '<div class="section"><h2>Svi termini u mesecu</h2><div class="card tight">';
+      list.forEach(function (s) { h += monthRow(s, 'editStudio', s.client || 'Klijent', s.job || '', s.status === 'done'); });
+      h += '</div></div>';
+    }
+    return h + '</div>' + nav('studio');
+  };
+
+  V.troskovi = function () {
+    var m = UI.month, list = M.inMonth(S.expenses, m).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    var total = M.sumEur(S, list);
+    var h = '<div class="scr src-trosak">' + backRow('Troškovi', '<div class="acts"><button class="ibtn acc" data-act="newExpense" aria-label="Dodaj trošak">' + I.plus + '</button></div>') + monthSwitch('h2');
+    h += '<div class="hero"><div class="lbl">' + M.monthLabel(m) + '</div><div class="big num">−' + eurTxt(total) + '</div><div class="small num">' + (list.length ? M.rawText(M.sumRaw(list)) : 'nema troškova ovog meseca') + '</div></div>';
+    if (list.length) {
+      var cats = {};
+      list.forEach(function (e) { cats[e.cat] = (cats[e.cat] || 0) + M.eurOf(S, e); });
+      var arr = Object.keys(cats).map(function (k) { return [k, cats[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+      var max = arr[0][1] || 1;
+      h += '<div class="card"><h2>Po kategorijama</h2><div class="bars">';
+      arr.forEach(function (c) {
+        var on = UI.trosakCat === c[0], dim = UI.trosakCat && !on;
+        h += '<button class="hbar' + (dim ? ' dim' : '') + '" data-act="trosakCat" data-v="' + esc(c[0]) + '" aria-pressed="' + on + '"><span class="hb-top"><span>' + esc(c[0]) + '</span><b class="num">' + eurTxt(c[1]) + '</b></span><span class="track"><i style="width:' + Math.max(2, Math.round(c[1] / max * 100)) + '%"></i></span></button>';
+      });
+      h += '</div></div>';
+    }
+    var shown = list.filter(function (e) { return !UI.trosakCat || e.cat === UI.trosakCat; });
+    h += '<div class="section"><div class="section-head"><h2>' + (UI.trosakCat ? esc(UI.trosakCat) : 'Svi troškovi') + '</h2>' + (UI.trosakCat ? '<button class="chip sm" data-act="trosakCat" data-v="">Prikaži sve</button>' : '') + '</div>';
+    if (!shown.length) h += '<div class="card"><div class="empty">Nema troškova za ovaj mesec.</div></div>';
+    else {
+      h += '<div class="card tight">';
+      shown.forEach(function (e) {
+        var rec = e.recurring || e.parentId;
+        h += '<button class="row" data-act="editExpense" data-id="' + e.id + '"><span class="badge">' + esc((e.cat || '?').charAt(0)) + '</span><span class="grow"><span class="t">' + esc(e.note || e.cat) + '</span><span class="s">' + M.fmtDate(e.date) + ' · ' + esc(e.cat) + (rec ? ' · ponavlja se mesečno' : '') + '</span></span><span class="v num">−' + rawOf(e) + (e.rsd ? '<small>= ' + eurTxt(M.eurOf(S, e)) + '</small>' : '') + '</span></button>';
+      });
+      h += '</div>';
+    }
+    h += '<button class="btn block" data-act="newExpense">+ Dodaj trošak</button></div>';
+    return h + '</div>';
+  };
+
+  V.stednja = function () {
+    var total = M.savingsTotal(S), m = UI.month;
+    var monthNet = M.inMonth(S.moves, m).reduce(function (s, x) { return s + (x.dir === 'out' ? -x.amount : x.amount); }, 0);
+    var h = '<div class="scr src-stednja">' + backRow('Štednja');
+    h += '<div class="hero"><div class="lbl">Ukupno ušteđeno</div><div class="big num">' + amt(total) + ' €</div><div class="small num">' + M.monthLabel(m) + ': ' + (monthNet >= 0 ? '+' : '') + amt(monthNet) + ' €</div></div>';
+    h += '<div class="card"><div class="seg" role="group" aria-label="Vrsta"><button class="' + (UI.savMode === 'in' ? 'on' : '') + '" data-act="savMode" data-v="in">Stavi na štednju</button><button class="' + (UI.savMode === 'out' ? 'on neutral' : '') + '" data-act="savMode" data-v="out">Podigni</button></div>' +
+      '<div class="inline-add"><label class="amt" style="flex:1"><input id="sav-amt" inputmode="decimal" data-u="savAmt" value="' + esc(UI.savAmt) + '" placeholder="0" aria-label="Iznos u evrima"><span>€</span></label><button class="btn" data-act="saveMove">Sačuvaj</button></div>' +
+      '<div class="chips"><button class="chip sm' + (!UI.savGoal ? ' on' : '') + '" data-act="savGoal" data-v="">Opšta štednja</button>' +
+      S.goals.map(function (g) { return '<button class="chip sm' + (UI.savGoal === g.id ? ' on' : '') + '" data-act="savGoal" data-v="' + g.id + '">' + esc(g.name) + '</button>'; }).join('') + '</div></div>';
+
+    h += '<div class="section"><div class="section-head"><h2>Ciljevi</h2><button class="chip sm add" data-act="toggleGoalForm">+ Novi cilj</button></div>';
+    if (UI.goalForm) {
+      h += '<div class="card"><label class="field">Naziv cilja<input id="goal-name" data-u="goalName" value="' + esc(UI.goalName) + '" placeholder="npr. Nova gitara"></label>' +
+        '<label class="field">Koliko ti treba (€)<input id="goal-target" inputmode="decimal" data-u="goalTarget" value="' + esc(UI.goalTarget) + '" placeholder="npr. 1.500"></label>' +
+        '<button class="btn" data-act="saveGoal">Dodaj cilj</button></div>';
+    }
+    var general = M.savingsTotal(S, null);
+    if (!S.goals.length && !UI.goalForm) h += '<div class="card"><div class="empty">Napravi cilj, npr. „Nova oprema za studio”, pa prati koliko ti još fali.</div></div>';
+    S.goals.forEach(function (g) {
+      var saved = M.savingsTotal(S, g.id), pct = g.target ? Math.min(100, Math.round(saved / g.target * 100)) : 0;
+      h += '<div class="goal"><div class="gh"><b>' + esc(g.name) + '</b><span class="sub">' + pct + '%</span></div><div class="track"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="gf"><b class="num">' + amt(saved) + ' €</b><span class="sub num">od ' + amt(g.target) + ' € · fali ' + amt(Math.max(0, g.target - saved)) + ' €</span></div>';
+      if (UI.confirm === 'goal:' + g.id) h += '<div class="btns"><button class="btn ghost small" data-act="cancelConfirm">Odustani</button><button class="btn danger solid small" data-act="deleteGoal" data-id="' + g.id + '">Obriši cilj</button></div><div class="note">Uplate ostaju i prelaze u opštu štednju.</div>';
+      else h += '<button class="linkbtn" style="align-self:flex-start;min-height:36px;font-size:14px" data-act="confirm" data-c="goal:' + g.id + '">Obriši cilj</button>';
+      h += '</div>';
+    });
+    if (S.goals.length && general) h += '<div class="note">Opšta štednja (bez cilja): <b class="num" style="color:var(--fg)">' + amt(general) + ' €</b></div>';
+    h += '</div>';
+
+    var moves = S.moves.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    h += '<div class="section"><h2>Istorija</h2>';
+    if (!moves.length) h += '<div class="card"><div class="empty">Još ništa nisi stavio na štednju.</div></div>';
+    else {
+      h += '<div class="card tight">';
+      moves.forEach(function (x) {
+        var g = findIn(S.goals, x.goalId);
+        h += '<button class="row" data-act="confirm" data-c="mv:' + x.id + '"><span class="grow"><span class="t">' + (x.dir === 'out' ? 'Podignuto' : 'Stavljeno na štednju') + '</span><span class="s">' + M.fmtDateY(x.date) + ' · ' + esc(g ? g.name : 'Opšta štednja') + '</span></span><span class="v num" style="color:' + (x.dir === 'out' ? 'var(--fg)' : 'var(--stednja)') + '">' + (x.dir === 'out' ? '−' : '+') + amt(x.amount) + ' €</span></button>';
+        if (UI.confirm === 'mv:' + x.id) h += '<div class="btns" style="padding:0 0 12px"><button class="btn ghost small" data-act="cancelConfirm">Odustani</button><button class="btn danger solid small" data-act="deleteMove" data-id="' + x.id + '">Obriši ovaj unos</button></div>';
+      });
+      h += '</div>';
+    }
+    return h + '</div></div>';
+  };
+
+  V.statistika = function () {
+    var months = M.monthsRange(S, UI.period);
+    var inRange = function (list) { return list.filter(function (e) { return months.indexOf(M.ym(e.date)) >= 0; }); };
+    var gigs = inRange(S.gigs).filter(function (g) { return g.status === 'done' && !g.pending; }), ven = inRange(S.venac).filter(M.isPaid), stu = inRange(S.studio).filter(function (g) { return g.status === 'done' && !g.pending; }), exp = inRange(S.expenses);
+    var gE = M.sumEur(S, gigs), vE = M.sumEur(S, ven), sE = M.sumEur(S, stu), xE = M.sumEur(S, exp), inc = gE + vE + sE;
+    var h = '<div class="scr">' + backRow('Statistika', '<div class="acts"><button class="ibtn" data-act="go" data-r="izvestaj" aria-label="Godišnji izveštaj">' + I.doc + '</button></div>');
+    h += '<div class="chips">' + [['6', '6 meseci'], ['12', '12 meseci'], ['all', 'Sve']].map(function (p) { return '<button class="chip sm light' + (UI.period === p[0] ? ' on' : '') + '" data-act="period" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+    h += '<div class="card"><div class="sub">Ukupna zarada · ' + M.monthLabel(months[0]).toLowerCase() + ' – ' + M.monthLabel(months[months.length - 1]).toLowerCase() + '</div>' +
+      '<div class="num" style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--amber)">' + eurTxt(inc) + '</div>' +
+      '<div class="grid2"><div><div class="sub">Troškovi</div><b class="num" style="font-size:18px;color:var(--trosak)">−' + eurTxt(xE) + '</b></div><div><div class="sub">Ostalo ti</div><b class="num" style="font-size:18px">' + eurTxt(inc - xE) + '</b></div></div></div>';
+    if (!inc && !xE) {
+      h += '<div class="card"><div class="empty">Kad upišeš prve svirke i uplate, ovde ćeš videti grafike i rekorde.</div></div>';
+      return h + '</div>';
+    }
+    var srcs = [['Privatne svirke', gE, 'amber'], ['Ansambl Venac', vE, 'venac'], ['Sonoris Production', sE, 'studio']];
+    var maxS = Math.max(gE, vE, sE) || 1;
+    h += '<div class="card"><h2>Po izvorima</h2><div class="bars">' + srcs.map(function (s) {
+      return '<div class="hbar"><span class="hb-top"><span>' + s[0] + '</span><b class="num">' + eurTxt(s[1]) + (inc ? ' · ' + Math.round(s[1] / inc * 100) + '%' : '') + '</b></span><span class="track"><i style="width:' + Math.round(s[1] / maxS * 100) + '%;background:var(--' + s[2] + ')"></i></span></div>';
+    }).join('') + '</div></div>';
+
+    var per = months.map(function (m) { var s = M.monthSummary(S, m); return { m: m, g: s.gigs.eur, v: s.venac.eur, s: s.studio.eur, t: s.income }; });
+    var maxT = Math.max.apply(null, per.map(function (p) { return p.t; })) || 1, every = Math.ceil(per.length / 12);
+    h += '<div class="card"><h2>Zarada po mesecima</h2><div class="cols">' + per.map(function (p, i) {
+      var show = i % every === 0 || i === per.length - 1;
+      var hh = function (v) { return v > 0 ? Math.max(3, Math.round(v / maxT * 120)) : 0; };
+      return '<div class="col"><span class="k num">' + (show && p.t ? num(p.t) : '') + '</span><span class="seg-stack">' +
+        (hh(p.g) ? '<i style="height:' + hh(p.g) + 'px;background:var(--amber)"></i>' : '') +
+        (hh(p.v) ? '<i style="height:' + hh(p.v) + 'px;background:var(--venac)"></i>' : '') +
+        (hh(p.s) ? '<i style="height:' + hh(p.s) + 'px;background:var(--studio)"></i>' : '') +
+        '</span><span class="m">' + (show ? M.MONTHS_SHORT[Number(p.m.slice(5)) - 1] : '') + '</span></div>';
+    }).join('') + '</div><div class="legend-l"><span><i style="background:var(--amber)"></i>Svirke</span><span><i style="background:var(--venac)"></i>Venac</span><span><i style="background:var(--studio)"></i>Studio</span><span>u evrima</span></div></div>';
+
+    function topList(title, arr) {
+      if (!arr.length) return '';
+      var max = arr[0][1];
+      return '<div class="card"><h2>' + title + '</h2><div class="bars">' + arr.slice(0, 5).map(function (r) {
+        return '<div class="hbar"><span class="hb-top"><span>' + esc(r[0]) + '</span><b class="num">' + r[1] + '</b></span><span class="track"><i style="width:' + Math.round(r[1] / max * 100) + '%"></i></span></div>';
+      }).join('') + '</div></div>';
+    }
+    h += topList('Svirke: gde najviše sviram', M.countBy(gigs, 'place'));
+    h += topList('Svirke: vrste proslava', M.countBy(gigs, 'type'));
+    var me = M.avg(gigs, 'me'), gr = M.avg(gigs, 'grp');
+    h += '<div class="statgrid"><div class="stat"><small>Svirki</small><b class="num">' + gigs.length + '</b></div><div class="stat"><small>Moja ocena</small><b class="num" style="color:var(--amber)">' + (me ? M.dec1(me) : '–') + '</b></div><div class="stat"><small>Orkestar</small><b class="num" style="color:var(--teal)">' + (gr ? M.dec1(gr) : '–') + '</b></div></div>';
+    var miss = inRange(S.gigs).filter(function (g) { return g.status === 'missed'; });
+    if (miss.length) {
+      var byVenac = miss.filter(function (g) { return g.reason === 'Koncert u Vencu'; }).length;
+      h += '<div class="note">Nisi svirao: <b style="color:var(--fg)">' + plural(miss.length, 'svirka', 'svirke', 'svirki') + '</b>' + (byVenac ? ', od toga ' + byVenac + ' zbog koncerta u Vencu' : '') + '</div>';
+    }
+    if (gigs.length) h += '<div class="note">Prosek po svirci: <b class="num" style="color:var(--fg)">' + eurTxt(gE / gigs.length) + '</b> · snimanja u studiju: ' + stu.length + '</div>';
+    return h + '</div>';
+  };
+
+  V.podesavanja = function () {
+    var st = S.settings;
+    var h = '<div class="scr">' + backRow('Podešavanja');
+    h += '<div class="section"><div class="eyebrow" style="color:var(--muted)">Kurs evra</div><div class="card">' +
+      '<div class="top"><div class="left"><div class="sub">' + (st.rateSource === 'NBS' ? 'Srednji kurs NBS' : 'Kurs (upisan ručno)') + '</div><div class="num" style="font-family:var(--font-display);font-size:24px;font-weight:700">1 € = ' + M.fmtRate(st.rate) + ' RSD</div>' +
+      (st.rateDate ? '<div class="sub">' + (st.rateSource === 'NBS' ? 'preuzeto ' : 'upisano ') + M.fmtDateY(st.rateDate) + '</div>' : '') + '</div>' +
+      '<button class="ibtn" data-act="refreshRate" aria-label="Osveži kurs sa NBS" style="background:var(--surface-2)">' + I.refresh + '</button></div>' +
+      '<div class="inline-add"><input id="rate-in" inputmode="decimal" data-u="rateIn" value="' + esc(UI.rateIn) + '" placeholder="Upiši kurs ručno, npr. 117,2" aria-label="Kurs ručno"><button class="btn small" data-act="saveRate">Sačuvaj</button></div>' +
+      '<div class="note" style="padding:0">Sve se računa u evrima. Iznos u dinarima se preračunava po srednjem kursu NBS na dan uplate. Kurs se sam preuzima kad je telefon na internetu; ako ne može, koristi se ovaj kurs.</div></div></div>';
+
+    h += '<div class="banner" style="gap:12px"><div><b style="color:var(--amber)">Rezervna kopija</b><br>Podaci se čuvaju samo na ovom telefonu. Napravi kopiju jednom mesečno i sačuvaj je (npr. pošalji sebi na Viber ili mejl).' +
+      (st.lastBackup ? '<br><span style="color:var(--muted)">Poslednja kopija: ' + M.fmtDateY(st.lastBackup) + '</span>' : '') + '</div>' +
+      '<div class="btns"><button class="btn small" data-act="exportData">Izvezi podatke</button><button class="btn ghost small" data-act="copyData">Kopiraj kao tekst</button></div>';
+    if (UI.showExport) h += '<textarea class="code" id="export-text" readonly aria-label="Podaci za kopiranje">' + esc(JSON.stringify(S)) + '</textarea><div class="note" style="padding:0">Označi ceo tekst i kopiraj ga ako dugme nije radilo.</div>';
+    h += '<div class="lbl" style="color:#E9E2D2">Vrati podatke iz kopije</div>' +
+      '<label class="btn ghost small" for="import-file" style="cursor:pointer">Izaberi fajl kopije</label><input id="import-file" type="file" accept=".json,application/json,text/plain" hidden>' +
+      '<textarea class="code" id="import-text" data-u="importText" placeholder="…ili nalepi tekst kopije ovde" aria-label="Tekst kopije">' + esc(UI.importText) + '</textarea>' +
+      '<button class="btn ghost small" data-act="importText">Uvezi iz teksta</button>';
+    if (UI.pendingImport) h += '<div class="banner warn"><div>Ova kopija ima ' + UI.pendingImport.count + ' unosa. Uvoz će <b>zameniti sve</b> trenutne podatke na telefonu.</div><div class="btns"><button class="btn ghost small" data-act="cancelImport">Odustani</button><button class="btn danger solid small" data-act="confirmImport">Zameni podatke</button></div></div>';
+    h += '</div>';
+
+    function listEditor(key, title) {
+      var items = S.lists[key];
+      var adding = UI.adding === key;
+      return '<details class="card"' + (UI.openList === key ? ' open' : '') + ' data-list="' + key + '"><summary>' + title + ' <span>' + items.length + '</span></summary><div class="chips">' +
+        items.map(function (c, i) { return '<button class="chip sm" data-act="removeItem" data-list="' + key + '" data-i="' + i + '" aria-label="Ukloni ' + esc(c) + '">' + esc(c) + '<span class="x">×</span></button>'; }).join('') +
+        '<button class="chip sm add" data-act="listAdd" data-list="' + key + '">+ Dodaj</button></div>' +
+        (adding ? '<div class="inline-add"><input id="list-new" data-u="newCat" value="' + esc(UI.newCat) + '" placeholder="Naziv" aria-label="Naziv nove stavke"><button class="btn small" data-act="listAddSave" data-list="' + key + '">Dodaj</button></div>' : '') +
+        '<div class="note" style="padding:0">Uklanjanje kategorije ne briše već upisane unose.</div></details>';
+    }
+    h += '<div class="section"><div class="eyebrow" style="color:var(--muted)">Liste</div>' +
+      listEditor('gigTypes', 'Vrste proslava') + listEditor('studioJobs', 'Kategorije poslova u studiju') + listEditor('expenseCats', 'Kategorije troškova') + '</div>';
+
+    h += '<div class="card tight"><label class="setrow" for="set-name"><span>Ime</span><input id="set-name" data-u="name" value="' + esc(st.name || '') + '" style="background:none;border:none;color:var(--muted);text-align:right;font-size:16px;min-width:0;width:50%" aria-label="Ime"></label>' +
+      '<div class="setrow"><span>Jezik</span><span>Srpski (latinica)</span></div><div class="setrow"><span>Verzija</span><span>' + VERSION + '</span></div></div>';
+    if (UI.confirm === 'wipe') h += '<div class="banner warn"><div>Ovo trajno briše sve svirke, uplate, snimanja, troškove i štednju sa ovog telefona.</div><div class="btns"><button class="btn ghost small" data-act="cancelConfirm">Odustani</button><button class="btn danger solid small" data-act="wipe">Obriši sve</button></div></div>';
+    else h += '<button class="btn danger block" data-act="confirm" data-c="wipe">Obriši sve podatke</button>';
+    return h + '</div>';
+  };
+
+  V.izvestaj = function () {
+    var R = M.yearReport(S, UI.year), t = R.tot;
+    var h = '<div class="scr src-svirke">' + backRow('Godišnji izveštaj');
+    h += '<div class="msw"><button class="ibtn" data-act="year" data-d="-1" aria-label="Prethodna godina">' + I.left + '</button><h2 style="flex:1;text-align:center;font-family:var(--font-display);font-size:26px">' + R.year + '.</h2><button class="ibtn" data-act="year" data-d="1" aria-label="Sledeća godina">' + I.right + '</button></div>';
+    h += '<div class="hero"><div class="lbl">Ostalo ti u ' + R.year + '.</div><div class="big num">' + eurTxt(t.net) + '</div><div class="small num">zarada ' + eurTxt(t.inc) + ' − troškovi ' + eurTxt(t.x) + (t.sav ? ' · na štednju ' + eurTxt(t.sav) : '') + '</div></div>';
+    function cell(v) { return Math.round(v) ? num(v) : '–'; }
+    h += '<div class="card" style="padding:12px 8px"><div class="tblwrap"><table class="tbl"><thead><tr><th>Mesec</th><th>Svirke</th><th>Venac</th><th>Studio</th><th>Zarada</th><th>Troškovi</th><th>Ostaje</th></tr></thead><tbody>' +
+      R.rows.map(function (r) {
+        return '<tr' + (r.m === M.ym(TODAY) ? ' class="cur"' : '') + '><td>' + M.MONTHS_SHORT[Number(r.m.slice(5)) - 1] + '</td><td>' + cell(r.g) + '</td><td>' + cell(r.v) + '</td><td>' + cell(r.s) + '</td><td><b>' + cell(r.inc) + '</b></td><td class="neg">' + cell(r.x) + '</td><td><b>' + cell(r.net) + '</b></td></tr>';
+      }).join('') +
+      '</tbody><tfoot><tr><td>Ukupno</td><td>' + cell(t.g) + '</td><td>' + cell(t.v) + '</td><td>' + cell(t.s) + '</td><td>' + cell(t.inc) + '</td><td class="neg">' + cell(t.x) + '</td><td>' + cell(t.net) + '</td></tr></tfoot></table></div>' +
+      '<div class="note">Svi iznosi su u evrima. Dinari preračunati po kursu NBS na dan uplate.</div></div>';
+
+    h += '<div class="card"><h2>Privatne svirke</h2><div class="card tight" style="background:transparent;padding:0">' +
+      setRow('Odsvirano', R.gigsDone) + setRow('Nisam svirao', R.gigsMissed + (R.gigsMissedVenac ? ' (' + R.gigsMissedVenac + ' zbog Venca)' : '')) +
+      setRow('Zarada', eurTxt(t.g)) + setRow('Prosek po svirci', R.gigsDone ? eurTxt(t.g / R.gigsDone) : '–') + '</div></div>';
+    h += '<div class="card"><h2>Ansambl Venac</h2><div class="card tight" style="background:transparent;padding:0">' +
+      setRow('Plate (' + R.plataN + ')', eurTxt(R.plataEur)) + setRow('Dnevnice (' + R.dnevN + ', ' + plural(R.dnevDays, 'dan', 'dana', 'dana') + ')', eurTxt(R.dnevEur)) + setRow('Ukupno', eurTxt(t.v)) + '</div></div>';
+    h += '<div class="card"><h2>Sonoris Production</h2><div class="card tight" style="background:transparent;padding:0">' +
+      setRow('Urađenih snimanja', R.studioDone) + setRow('Zarada', eurTxt(t.s)) +
+      (R.clients.length ? setRow('Najčešći klijenti', R.clients.slice(0, 3).map(function (c) { return esc(c[0]) + ' (' + c[1] + ')'; }).join(', ')) : '') + '</div></div>';
+    h += '<div class="card"><h2>Troškovi po kategorijama</h2><div class="card tight" style="background:transparent;padding:0">' +
+      (R.cats.length ? R.cats.map(function (c) { return setRow(esc(c[0]), eurTxt(c[1])); }).join('') : setRow('Nema troškova', '')) + setRow('<b>Ukupno</b>', '<b>' + eurTxt(t.x) + '</b>') + '</div></div>';
+    h += '<div class="btns"><button class="btn" data-act="exportReport">' + (window.MS_ARTIFACT ? 'Kopiraj za Excel' : 'Izvezi za Excel') + '</button>' + (window.MS_ARTIFACT ? '' : '<button class="btn ghost" data-act="copyReport">Kopiraj tabelu</button>') + '</div>' +
+      '<div class="note">' + (window.MS_ARTIFACT ? 'Kopirana tabela se nalepi direktno u Excel ili Google tabele.' : 'Fajl se otvara u Excel-u. „Kopiraj tabelu” možeš da nalepiš direktno u Excel ili Google tabele.') + '</div>';
+    return h + '</div>';
+  };
+  function setRow(a, b) { return '<div class="setrow"><span>' + a + '</span><span class="num">' + b + '</span></div>'; }
+
+  function reportRows() {
+    var R = M.yearReport(S, UI.year), r0 = function (v) { return Math.round(v); };
+    var rows = [['Mesec', 'Svirke (€)', 'Venac (€)', 'Studio (€)', 'Zarada (€)', 'Troškovi (€)', 'Ostaje (€)', 'Na štednju (€)', 'Broj svirki']];
+    R.rows.forEach(function (r) { rows.push([M.MONTHS[Number(r.m.slice(5)) - 1] + ' ' + R.year, r0(r.g), r0(r.v), r0(r.s), r0(r.inc), r0(r.x), r0(r.net), r0(r.sav), r.n]); });
+    var t = R.tot;
+    rows.push(['Ukupno ' + R.year, r0(t.g), r0(t.v), r0(t.s), r0(t.inc), r0(t.x), r0(t.net), r0(t.sav), R.gigsDone]);
+    rows.push([]);
+    rows.push(['Troškovi po kategorijama', 'Iznos (€)']);
+    R.cats.forEach(function (c) { rows.push([c[0], r0(c[1])]); });
+    rows.push([]);
+    rows.push(['Plate Venac', r0(R.plataEur)], ['Dnevnice Venac', r0(R.dnevEur)], ['Dana na koncertima', R.dnevDays], ['Nisam svirao (svirki)', R.gigsMissed], ['Urađenih snimanja', R.studioDone]);
+    return rows;
+  }
+  function exportReport(asText) {
+    var rows = reportRows();
+    if (asText || window.MS_ARTIFACT) {
+      var tsv = rows.map(function (r) { return r.join('\t'); }).join('\n');
+      try {
+        navigator.clipboard.writeText(tsv).then(function () { toast('Tabela kopirana. Nalepi je u Excel.'); }).catch(function () { toast('Kopiranje nije uspelo na ovom uređaju.'); });
+      } catch (e) { toast('Kopiranje nije uspelo na ovom uređaju.'); }
+      return;
+    }
+    var csv = '﻿' + rows.map(function (r) { return r.map(function (v) { v = String(v); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';'); }).join('\r\n');
+    saveFile('mikijeve-finansije-izvestaj-' + UI.year + '.csv', 'text/csv', csv, function () { toast('Izveštaj sačuvan'); });
+  }
+  function saveFile(name, mime, text, done) {
+    try {
+      var blob = new Blob([text], { type: mime });
+      if (typeof File !== 'undefined' && navigator.canShare) {
+        var file = new File([blob], name, { type: mime });
+        if (navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: name }).then(done).catch(function () {}); return; }
+      }
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      done();
+    } catch (e) { toast('Čuvanje fajla nije uspelo.'); }
+  }
+
+  V.dodaj = function () {
+    function ch(cls, act, k, icon, title, subTxt) {
+      return '<button class="choice ' + cls + '" data-act="' + act + '"' + (k ? ' data-k="' + k + '"' : '') + '><span class="ic">' + icon + '</span><span><b>' + title + '</b><small>' + subTxt + '</small></span></button>';
+    }
+    return '<div class="scr"><div class="top"><h1>Šta upisuješ?</h1><button class="ibtn" data-act="back" aria-label="Zatvori">' + I.close + '</button></div>' +
+      ch('src-svirke', 'newGig', '', I.music, 'Privatna svirka', 'Zakaži ili upiši zaradu posle svirke') +
+      ch('src-venac', 'newVenac', 'plata', 'P', 'Plata – Venac', 'Kad je legla i koliko') +
+      ch('src-venac', 'newVenac', 'dnevnica', 'D', 'Dnevnica – Venac', 'Koncert, broj dana i iznos') +
+      ch('src-studio', 'newStudio', '', I.mic, 'Snimanje – studio', 'Sonoris Production: klijent i termin') +
+      ch('src-trosak', 'newExpense', '', I.minus, 'Trošak', 'Gorivo, oprema, kredit, porodica…') +
+      ch('src-stednja', 'go', 'stednja', I.bank, 'Štednja', 'Stavi na štednju ili podigni') + '</div>';
+  };
+
+  /* ---------- formulari ---------- */
+  V.gigForm = function () {
+    var f = UI.form, done = f.status === 'done', missed = f.status === 'missed';
+    var h = '<div class="scr form src-svirke">' + formTop(f.id ? 'Izmeni svirku' : 'Privatna svirka');
+    h += '<div class="seg" role="group" aria-label="Status"><button class="' + (f.status === 'planned' ? 'on neutral' : '') + '" data-act="fset" data-f="status" data-v="planned">Zakazano</button><button class="' + (done ? 'on' : '') + '" data-act="fset" data-f="status" data-v="done">Odsvirano</button><button class="' + (missed ? 'on neutral' : '') + '" data-act="fset" data-f="status" data-v="missed">Nisam svirao</button></div>';
+    h += '<div class="grid2">' + field('Datum', f, 'date', 'date') + field('Vreme', f, 'time', 'time') + '</div>';
+    h += field('Sala / objekat', f, 'venue', 'text', ' list="dl-venue" autocomplete="off" placeholder="npr. Restoran Kruna"') + datalist('dl-venue', uniq(S.gigs, 'venue'));
+    h += field('Mesto', f, 'place', 'text', ' list="dl-place" autocomplete="off" placeholder="npr. Gračanica"') + datalist('dl-place', uniq(S.gigs, 'place'));
+    h += chipsField('Vrsta proslave', 'gigTypes', 'type', f.type);
+    if (missed) {
+      h += '<div class="section"><div class="lbl">Zašto nisi svirao</div><div class="chips">' + REASONS.map(function (r) {
+        return '<button type="button" class="chip sm light' + (f.reason === r ? ' on' : '') + '" data-act="fset" data-f="reason" data-v="' + esc(r) + '">' + esc(r) + '</button>';
+      }).join('') + '</div></div><div class="hint">Svirka ostaje u kalendaru kao „Nisam svirao” i ne računa se u zaradu. U belešku možeš da upišeš ko te je zamenio.</div>';
+    } else if (!done) h += '<div class="hint">Svirka se upisuje kao zakazana. Posle svirke je otvori i prebaci na „Odsvirano” (pa upiši zaradu i ocene) ili na „Nisam svirao” ako nisi mogao da odeš.</div>';
+    else h += pendingToggle(f, 'Čeka uplatu', 'Još nisi dobio pare – ne računa se dok ne označiš „Plaćeno”') + amountFields(f, f.pending ? 'Koliko očekuješ (možeš i kasnije)' : null) + scale('me', f.me, 'me', 'Moja ocena') + scale('grp', f.grp, 'gr', 'Ocena orkestra');
+    h += noteField(f, 'Beleška', 'Šta je bilo dobro, šta poneti sledeći put, želje gostiju…');
+    h += '<button class="btn block" data-act="saveForm">Sačuvaj svirku</button>' + deleteBlock();
+    return h + '</div>';
+  };
+
+  V.venacForm = function () {
+    var f = UI.form, plata = f.vkind === 'plata';
+    var h = '<div class="scr form src-venac">' + formTop(f.id ? 'Izmeni uplatu' : 'Ansambl Venac');
+    h += '<div class="seg" role="group" aria-label="Vrsta uplate"><button class="' + (plata ? 'on' : '') + '" data-act="fset" data-f="vkind" data-v="plata">Plata</button><button class="' + (!plata ? 'on' : '') + '" data-act="fset" data-f="vkind" data-v="dnevnica">Dnevnica</button></div>';
+    if (plata) {
+      h += field('Plata za mesec', f, 'forMonth', 'month') + (f.pending ? '' : field('Datum kad je legla', f, 'date', 'date'));
+    } else {
+      h += field('Koncert / mesto', f, 'title', 'text', ' list="dl-konc" autocomplete="off" placeholder="npr. Koncert – Kragujevac"') + datalist('dl-konc', uniq(S.venac, 'title'));
+      h += field('Datum polaska', f, 'startDate', 'date');
+      h += '<div class="section"><div class="lbl">Koliko dana si bio na koncertu</div><div class="stepper"><button type="button" data-act="days" data-d="-1" aria-label="Manje dana">−</button><b class="num">' + f.days + ' ' + (f.days === 1 ? 'dan' : 'dana') + '</b><button type="button" class="plus" data-act="days" data-d="1" aria-label="Više dana">+</button></div></div>';
+      if (!f.pending) h += field('Datum kad je dnevnica legla', f, 'date', 'date');
+    }
+    h += pendingToggle(f, 'Još nije legla', 'Upiši sada, a kad legne pritisni „Plaćeno” na Pregledu');
+    h += amountFields(f, f.pending ? 'Koliko očekuješ (možeš i kasnije)' : plata ? 'Iznos plate' : 'Koliko je dnevnica legla (upisuješ sam)');
+    h += noteField(f, 'Beleška (nije obavezno)', '');
+    h += '<button class="btn block" data-act="saveForm">Sačuvaj uplatu</button>' + deleteBlock();
+    return h + '</div>';
+  };
+
+  V.studioForm = function () {
+    var f = UI.form, done = f.status === 'done';
+    var h = '<div class="scr form src-studio">' + formTop(f.id ? 'Izmeni termin' : 'Sonoris Production');
+    h += '<div class="seg" role="group" aria-label="Status"><button class="' + (!done ? 'on neutral' : '') + '" data-act="fset" data-f="status" data-v="planned">Zakazano</button><button class="' + (done ? 'on' : '') + '" data-act="fset" data-f="status" data-v="done">Urađeno</button></div>';
+    h += field('Klijent', f, 'client', 'text', ' list="dl-client" autocomplete="off" placeholder="npr. Nikola Lekić"') + datalist('dl-client', uniq(S.studio, 'client'));
+    h += '<div class="grid2">' + field('Datum', f, 'date', 'date') + field('Vreme', f, 'time', 'time') + '</div>';
+    h += chipsField('Kategorija posla', 'studioJobs', 'job', f.job);
+    if (done) h += pendingToggle(f, 'Čeka uplatu', 'Klijent plaća kasnije – ne računa se dok ne označiš „Plaćeno”') + amountFields(f, f.pending ? 'Koliko ti klijent duguje' : 'Zarađeno od klijenta');
+    else h += '<div class="hint">Termin se upisuje u kalendar studija. Zaradu upisuješ kad završiš posao.</div>';
+    h += noteField(f, 'Beleška', 'npr. 2 pesme, treba još prateći vokali');
+    h += '<button class="btn block" data-act="saveForm">Sačuvaj</button>' + deleteBlock();
+    return h + '</div>';
+  };
+
+  V.expenseForm = function () {
+    var f = UI.form;
+    var h = '<div class="scr form src-trosak">' + formTop(f.id ? 'Izmeni trošak' : 'Novi trošak');
+    h += chipsField('Kategorija', 'expenseCats', 'cat', f.cat);
+    h += amountFields(f, 'Iznos (evri, dinari ili oboje)');
+    h += field('Datum', f, 'date', 'date');
+    h += field('Opis (nije obavezno)', f, 'note', 'text', ' placeholder="npr. svadba u Lapljem Selu"');
+    if (f.parentId) h += '<div class="hint">Ovaj trošak je automatski ponovljen iz mesečnog troška. Ako ga obrišeš, neće se ponovo pojaviti za ovaj mesec.</div>';
+    else h += '<button type="button" class="toggle' + (f.recurring ? ' on' : '') + '" data-act="toggleRec" aria-pressed="' + !!f.recurring + '"><span class="tt"><b>Ponavlja se svakog meseca</b><small>npr. rata kredita – upisuje se sama</small></span><span class="sw"><i></i></span></button>';
+    h += '<button class="btn block" data-act="saveForm">Sačuvaj trošak</button>' + deleteBlock();
+    return h + '</div>';
+  };
+
+  /* ---------- otvaranje formulara ---------- */
+  function openGig(id, date) {
+    var g = id ? findIn(S.gigs, id) : null;
+    date = date || TODAY;
+    UI.form = g ? { kind: 'gig', id: g.id, status: g.status, reason: g.reason || REASONS[0], date: g.date, time: g.time || '', venue: g.venue || '', place: g.place || '', type: g.type || '', eur: inputVal(g.eur), rsd: inputVal(g.rsd), me: g.me || null, grp: g.grp || null, note: g.note || '', pending: !!g.pending }
+      : { kind: 'gig', status: date <= TODAY ? 'done' : 'planned', reason: REASONS[0], date: date, time: '', venue: '', place: '', type: S.lists.gigTypes[0] || '', eur: '', rsd: '', me: null, grp: null, note: '' };
+    go('gigForm');
+  }
+  function openVenac(id, kind) {
+    var e = id ? findIn(S.venac, id) : null;
+    UI.form = e ? { kind: 'venac', id: e.id, vkind: e.kind, forMonth: e.forMonth || '', date: e.date, title: e.title || '', startDate: e.startDate || '', days: e.days || 1, eur: inputVal(e.eur), rsd: inputVal(e.rsd), note: e.note || '', pending: !!e.pending }
+      : { kind: 'venac', vkind: kind || 'plata', forMonth: M.addMonths(M.ym(TODAY), -1), date: TODAY, title: '', startDate: TODAY, days: 1, eur: '', rsd: '', note: '' };
+    go('venacForm');
+  }
+  function openStudio(id, date) {
+    var s = id ? findIn(S.studio, id) : null;
+    date = date || TODAY;
+    UI.form = s ? { kind: 'studio', id: s.id, status: s.status, client: s.client || '', date: s.date, time: s.time || '', job: s.job || '', eur: inputVal(s.eur), rsd: inputVal(s.rsd), note: s.note || '', pending: !!s.pending }
+      : { kind: 'studio', status: date < TODAY ? 'done' : 'planned', client: '', date: date, time: '', job: S.lists.studioJobs[0] || '', eur: '', rsd: '', note: '' };
+    go('studioForm');
+  }
+  function openExpense(id) {
+    var e = id ? findIn(S.expenses, id) : null;
+    UI.form = e ? { kind: 'expense', id: e.id, cat: e.cat, date: e.date, eur: inputVal(e.eur), rsd: inputVal(e.rsd), note: e.note || '', recurring: !!e.recurring, parentId: e.parentId || null }
+      : { kind: 'expense', cat: S.lists.expenseCats[0] || 'Ostalo', date: TODAY, eur: '', rsd: '', note: '', recurring: false };
+    go('expenseForm');
+  }
+
+  function upsert(list, obj) {
+    for (var i = 0; i < list.length; i++) if (list[i].id === obj.id) { list[i] = Object.assign(list[i], obj); return list[i]; }
+    list.push(obj); return obj;
+  }
+
+  function saveForm() {
+    var f = UI.form; if (!f) return;
+    if (!f.date) { toast('Upiši datum'); return; }
+    var eur = M.parseAmount(f.eur), rsd = M.parseAmount(f.rsd), rate = M.rateFor(S, f.date), obj;
+    if (f.kind === 'gig') {
+      var done = f.status === 'done';
+      obj = upsert(S.gigs, { id: f.id || M.uid(), status: f.status, reason: f.status === 'missed' ? f.reason : null, date: f.date, time: f.time, venue: (f.venue || '').trim(), place: (f.place || '').trim(), type: f.type,
+        eur: done ? eur : 0, rsd: done ? rsd : 0, rate: done && rsd ? rate : null, me: done ? f.me : null, grp: done ? f.grp : null, note: (f.note || '').trim(), pending: done && !!f.pending });
+      save(); ensureRate(obj); afterSave('svirke', f.date, 'svirke');
+    } else if (f.kind === 'venac') {
+      var plata = f.vkind === 'plata';
+      var vdate = f.pending ? (plata ? TODAY : (f.startDate || f.date)) : f.date;
+      obj = upsert(S.venac, { id: f.id || M.uid(), kind: f.vkind, forMonth: plata ? f.forMonth : null, title: plata ? '' : (f.title || '').trim(), startDate: plata ? null : f.startDate, days: plata ? null : f.days,
+        date: vdate, eur: eur, rsd: rsd, rate: rsd && !f.pending ? M.rateFor(S, vdate) : null, note: (f.note || '').trim(), pending: !!f.pending });
+      save(); ensureRate(obj); afterSave(f.pending ? 'pregled' : 'venac', vdate);
+    } else if (f.kind === 'studio') {
+      var dn = f.status === 'done';
+      obj = upsert(S.studio, { id: f.id || M.uid(), status: f.status, client: (f.client || '').trim(), date: f.date, time: f.time, job: f.job,
+        eur: dn ? eur : 0, rsd: dn ? rsd : 0, rate: dn && rsd ? rate : null, note: (f.note || '').trim(), pending: dn && !!f.pending });
+      save(); ensureRate(obj); afterSave('studio', f.date, 'studio');
+    } else if (f.kind === 'expense') {
+      if (!eur && !rsd) { toast('Upiši iznos troška'); return; }
+      obj = upsert(S.expenses, { id: f.id || M.uid(), cat: f.cat, date: f.date, eur: eur, rsd: rsd, rate: rsd ? rate : null, note: (f.note || '').trim(), recurring: f.parentId ? false : !!f.recurring, parentId: f.parentId || null });
+      M.applyRecurring(S);
+      save(); ensureRate(obj); afterSave('troskovi', f.date);
+    }
+  }
+
+  function deleteForm() {
+    var f = UI.form; if (!f || !f.id) return;
+    var map = { gig: 'gigs', venac: 'venac', studio: 'studio', expense: 'expenses' };
+    var key = map[f.kind];
+    if (f.kind === 'expense' && f.parentId) {
+      var parent = findIn(S.expenses, f.parentId);
+      if (parent) { parent.skip = parent.skip || []; parent.skip.push(M.ym(f.date)); }
+    }
+    S[key] = S[key].filter(function (e) { return e.id !== f.id; });
+    save();
+    var route = { gig: 'svirke', venac: 'venac', studio: 'studio', expense: 'troskovi' }[f.kind];
+    UI.form = null; UI.stack = ['pregled']; UI.route = route; UI.confirm = null;
+    toast('Obrisano'); render();
+  }
+
+  /* ---------- rezervna kopija ---------- */
+  function markBackup() { S.settings.lastBackup = TODAY; save(); render(true); }
+  function exportData() {
+    if (window.MS_ARTIFACT) { copyData(); return; }
+    var json = JSON.stringify(S, null, 1), name = 'mikijeve-finansije-kopija-' + TODAY + '.json';
+    try {
+      var blob = new Blob([json], { type: 'application/json' });
+      if (typeof File !== 'undefined' && navigator.canShare) {
+        var file = new File([blob], name, { type: 'application/json' });
+        if (navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: 'Mikijeve Finansije – kopija' }).then(function () { markBackup(); toast('Kopija napravljena'); }).catch(function () { UI.showExport = true; render(true); });
+          return;
+        }
+      }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      markBackup(); toast('Kopija preuzeta');
+    } catch (e) { UI.showExport = true; render(true); }
+  }
+  function copyData() {
+    var txt = JSON.stringify(S);
+    UI.showExport = true;
+    try {
+      navigator.clipboard.writeText(txt).then(function () { markBackup(); toast('Kopirano. Nalepi i sačuvaj negde (Viber, mejl, beleške).'); })
+        .catch(function () { render(true); selectExport(); });
+    } catch (e) { render(true); selectExport(); }
+  }
+  function selectExport() { var t = document.getElementById('export-text'); if (t) { t.focus(); t.select(); } }
+  function prepareImport(text) {
+    try {
+      var obj = JSON.parse(text);
+      if (!obj || typeof obj !== 'object' || !obj.settings) throw new Error('x');
+      var n = M.normalize(obj);
+      var count = n.gigs.length + n.venac.length + n.studio.length + n.expenses.length + n.moves.length;
+      UI.pendingImport = { data: n, count: count }; render(true);
+    } catch (e) { toast('Ovo nije ispravna kopija aplikacije Mikijeve Finansije.'); }
+  }
+
+  /* ---------- akcije ---------- */
+  var A = {
+    main: function (d) { goMain(d.r); },
+    go: function (d) { var r = d.r || d.k; if (UI.route === 'dodaj') { UI.stack = ['pregled']; UI.route = r; UI.confirm = null; render(); return; } go(r); },
+    back: back,
+    month: function (d) { UI.month = M.addMonths(UI.month, Number(d.d)); UI.trosakCat = null; render(true); },
+    selGig: function (d) { UI.sel.svirke = d.date; render(true); },
+    selStudio: function (d) { UI.sel.studio = d.date; render(true); },
+    newGig: function (d) { if (UI.route === 'dodaj') UI.route = 'pregled', UI.stack = []; openGig(null, d.date); },
+    editGig: function (d) { openGig(d.id); },
+    newVenac: function (d) { if (UI.route === 'dodaj') UI.route = 'pregled', UI.stack = []; openVenac(null, d.k); },
+    editVenac: function (d) { openVenac(d.id); },
+    newStudio: function (d) { if (UI.route === 'dodaj') UI.route = 'pregled', UI.stack = []; openStudio(null, d.date); },
+    editStudio: function (d) { openStudio(d.id); },
+    newExpense: function () { if (UI.route === 'dodaj') UI.route = 'pregled', UI.stack = []; openExpense(null); },
+    editExpense: function (d) { openExpense(d.id); },
+    fset: function (d) { UI.form[d.f] = d.v; render(true); },
+    rate: function (d) { var v = Number(d.v); UI.form[d.f] = UI.form[d.f] === v ? null : v; render(true); },
+    days: function (d) { UI.form.days = Math.max(1, Math.min(60, (UI.form.days || 1) + Number(d.d))); render(true); },
+    togglePending: function () { UI.form.pending = !UI.form.pending; render(true); },
+    markPaid: function (d) {
+      var list = { gig: S.gigs, studio: S.studio, venac: S.venac }[d.src], e = findIn(list, d.id);
+      if (!e) return;
+      if (!e.eur && !e.rsd) {
+        if (d.src === 'gig') openGig(e.id); else if (d.src === 'studio') openStudio(e.id); else openVenac(e.id);
+        UI.form.pending = false; if (d.src === 'venac') UI.form.date = TODAY; render(true);
+        toast('Upiši koliko si dobio, pa sačuvaj'); return;
+      }
+      e.pending = false;
+      if (d.src === 'venac') e.date = TODAY;
+      e.paidDate = TODAY;
+      if (e.rsd) e.rate = M.rateFor(S, e.date);
+      save(); ensureRate(e); toast('Označeno kao plaćeno'); render(true);
+    },
+    year: function (d) { UI.year = String(Number(UI.year) + Number(d.d)); render(true); },
+    exportReport: function () { exportReport(false); },
+    copyReport: function () { exportReport(true); },
+    toggleRec: function () { UI.form.recurring = !UI.form.recurring; render(true); },
+    toggleAdd: function () { UI.adding = !UI.adding; UI.newCat = ''; render(true); var i = document.getElementById('newcat'); if (i) i.focus(); },
+    addCat: function (d) {
+      var n = (UI.newCat || '').trim(); if (!n) { toast('Upiši naziv kategorije'); return; }
+      var list = S.lists[d.list];
+      var existing = list.filter(function (x) { return x.toLowerCase() === n.toLowerCase(); })[0];
+      if (!existing) { list.splice(Math.max(0, list.length - (list[list.length - 1] === 'Ostalo' ? 1 : 0)), 0, n); save(); }
+      UI.form[d.f] = existing || n; UI.adding = false; UI.newCat = ''; render(true);
+    },
+    saveForm: saveForm,
+    confirm: function (d) { UI.confirm = UI.confirm === d.c ? null : d.c; render(true); },
+    cancelConfirm: function () { UI.confirm = null; render(true); },
+    deleteForm: deleteForm,
+    venacFilter: function (d) { UI.venacFilter = d.v; render(true); },
+    trosakCat: function (d) { UI.trosakCat = d.v && UI.trosakCat !== d.v ? d.v : null; render(true); },
+    period: function (d) { UI.period = d.v; render(true); },
+    savMode: function (d) { UI.savMode = d.v; render(true); },
+    savGoal: function (d) { UI.savGoal = d.v || null; render(true); },
+    saveMove: function () {
+      var a = M.parseAmount(UI.savAmt); if (!a) { toast('Upiši iznos'); return; }
+      S.moves.push({ id: M.uid(), goalId: UI.savGoal, date: TODAY, amount: a, dir: UI.savMode, note: '' });
+      save(); UI.savAmt = ''; toast(UI.savMode === 'in' ? 'Stavljeno na štednju' : 'Upisano podizanje'); render(true);
+    },
+    toggleGoalForm: function () { UI.goalForm = !UI.goalForm; render(true); var i = document.getElementById('goal-name'); if (i) i.focus(); },
+    saveGoal: function () {
+      var n = (UI.goalName || '').trim(), t = M.parseAmount(UI.goalTarget);
+      if (!n || !t) { toast('Upiši naziv i iznos cilja'); return; }
+      var g = { id: M.uid(), name: n, target: t }; S.goals.push(g); UI.savGoal = g.id;
+      UI.goalForm = false; UI.goalName = ''; UI.goalTarget = ''; save(); render(true);
+    },
+    deleteGoal: function (d) {
+      S.goals = S.goals.filter(function (g) { return g.id !== d.id; });
+      S.moves.forEach(function (x) { if (x.goalId === d.id) x.goalId = null; });
+      if (UI.savGoal === d.id) UI.savGoal = null;
+      UI.confirm = null; save(); render(true);
+    },
+    deleteMove: function (d) { S.moves = S.moves.filter(function (x) { return x.id !== d.id; }); UI.confirm = null; save(); toast('Obrisano'); render(true); },
+    refreshRate: function () { rateFails = 0; toast('Preuzimam kurs…'); refreshRate(true); },
+    saveRate: function () {
+      var r = M.parseAmount(UI.rateIn);
+      if (!(r > 50 && r < 500)) { toast('Upiši kurs, npr. 117,2'); return; }
+      S.settings.rate = r; S.settings.rateSource = 'ručno'; S.settings.rateDate = TODAY; UI.rateIn = ''; save(); toast('Kurs sačuvan'); render(true);
+    },
+    exportData: exportData,
+    copyData: copyData,
+    importText: function () { if (!(UI.importText || '').trim()) { toast('Nalepi tekst kopije'); return; } prepareImport(UI.importText); },
+    cancelImport: function () { UI.pendingImport = null; render(true); },
+    confirmImport: function () {
+      S = store.S = UI.pendingImport.data; M.applyRecurring(S); save();
+      UI.pendingImport = null; UI.importText = ''; toast('Podaci vraćeni iz kopije'); goMain('pregled');
+    },
+    listAdd: function (d) { UI.adding = UI.adding === d.list ? false : d.list; UI.openList = d.list; UI.newCat = ''; render(true); var i = document.getElementById('list-new'); if (i) i.focus(); },
+    listAddSave: function (d) {
+      var n = (UI.newCat || '').trim(); if (!n) return;
+      var list = S.lists[d.list];
+      if (!list.some(function (x) { return x.toLowerCase() === n.toLowerCase(); })) list.push(n);
+      UI.newCat = ''; UI.adding = false; UI.openList = d.list; save(); render(true);
+    },
+    removeItem: function (d) { S.lists[d.list].splice(Number(d.i), 1); UI.openList = d.list; save(); render(true); },
+    wipe: function () { S = store.S = M.defaults(); save(); UI.confirm = null; toast('Svi podaci obrisani'); goMain('pregled'); },
+    loadDemo: function () { S = store.S = M.demoData(TODAY); save(); render(true); },
+    clearDemo: function () { var keep = { lists: S.lists, settings: S.settings }; S = store.S = M.defaults(); S.settings = Object.assign(S.settings, keep.settings); save(); toast('Primer obrisan. Možeš da kreneš.'); render(true); }
+  };
+
+  /* ---------- prikaz ---------- */
+  function render(keepScroll) {
+    var y = window.scrollY;
+    var view = V[UI.route] || V.pregled;
+    if (/Form$/.test(UI.route) && !UI.form) { UI.route = 'pregled'; view = V.pregled; }
+    $app.innerHTML = view();
+    window.scrollTo(0, keepScroll ? y : 0);
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-act]');
+    if (!el || !$app.contains(el)) return;
+    var fn = A[el.dataset.act];
+    if (!fn) return;
+    e.preventDefault();
+    fn(el.dataset, el);
+  });
+  function onInput(e) {
+    var el = e.target; if (!el || !el.dataset) return;
+    if (el.dataset.f && UI.form) {
+      UI.form[el.dataset.f] = el.value;
+      if (el.dataset.f === 'eur' || el.dataset.f === 'rsd' || el.dataset.f === 'date') {
+        var t = document.getElementById('tot'); if (t) t.innerHTML = totHTML(UI.form);
+      }
+    } else if (el.dataset.u) {
+      if (el.dataset.u === 'name') { S.settings.name = el.value; save(); }
+      else UI[el.dataset.u] = el.value;
+    }
+  }
+  document.addEventListener('input', onInput);
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (el && el.id === 'import-file' && el.files && el.files[0]) {
+      var r = new FileReader();
+      r.onload = function () { prepareImport(String(r.result || '')); };
+      r.readAsText(el.files[0]);
+      return;
+    }
+    onInput(e);
+  });
+  document.addEventListener('toggle', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'DETAILS' && el.dataset.list) { if (el.open) UI.openList = el.dataset.list; else if (UI.openList === el.dataset.list) UI.openList = null; }
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var el = e.target;
+    if (el && el.id === 'newcat') { e.preventDefault(); var b = document.querySelector('[data-act="addCat"]'); if (b) b.click(); }
+    if (el && el.id === 'list-new') { e.preventDefault(); var c = document.querySelector('[data-act="listAddSave"]'); if (c) c.click(); }
+  });
+
+  render();
+  refreshRate(false).then(function () { backfillRates(); });
+
+  if ('serviceWorker' in navigator && /^https:$/.test(location.protocol) && !/claude\.ai|claudeusercontent/.test(location.hostname)) {
+    try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {}
+  }
+})();
+
+</script>
+</body>
+</html>
